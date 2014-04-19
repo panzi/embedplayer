@@ -1,5 +1,5 @@
 // $('.videos').embedplayer(); // just initilaize APIs
-// $('.videos').embedplayer('listen','ready play pause finish buffering timeupdate');
+// $('.videos').embedplayer('listen','ready play pause finish buffering timeupdate volumechange durationchange');
 // $('.videos').embedplayer('play');
 // $('.videos').embedplayer('pause');
 // $('.videos').embedplayer('stop');
@@ -16,12 +16,13 @@
 // $('.videos').on('embedplayer:buffering', handler);
 // $('.videos').on('embedplayer:statechange', handler);
 // $('.videos').on('embedplayer:timeupdate', handler);
+// $('.videos').on('embedplayer:volumechange', handler);
+// $('.videos').on('embedplayer:durationchange', handler);
 
 (function ($, undefined) {
 	"use strict";
 
 	$.embedplayer = {
-		next_player_id: 1,
 		modules: [],
 		modules_by_origin: {},
 		defaults: {
@@ -31,10 +32,10 @@
 			pause: function (data) {},
 			stop: function (data) {},
 			listen: function (data,events) {},
-			volume: function (data) { return NaN; },
+			volume: function (data, callback) { callback(NaN); },
+			duration: function (data, callback) { callback(NaN); },
+			currenttime: function (data, callback) { callback(NaN); },
 			setVolume: function (data,volume) {},
-			duration: function (data) { return NaN; },
-			currenttime: function (data) { return NaN; },
 			seek: function (data,position) {},
 			link: function (data) { return null; },
 			parseMessage: function (event) {},
@@ -66,7 +67,7 @@
 
 	function make_module (module) {
 		module = $.extend({}, $.embedplayer.defaults, module);
-		var origin = {};
+		var origins = {};
 		if (module.origin) {
 			if (!$.isArray(module.origin)) {
 				module.origin = [module.origin];
@@ -74,14 +75,14 @@
 			for (var i = 0; i < module.origin.length; ++ i) {
 				var origin = module.origin[i];
 				if (/^\/\//.test(origin)) {
-					origin[location.protocol+origin] = true;
+					origins[location.protocol+origin] = true;
 				}
 				else {
-					origin[origin] = true;
+					origins[origin] = true;
 				}
 			}
 		}
-		module.origin = origin;
+		module.origin = origins;
 		return module;
 	}
 
@@ -114,7 +115,6 @@
 			}
 
 			data = {
-				player_id: $.embedplayer.next_player_id ++,
 				module: module,
 				state: 'init',
 				listening: {
@@ -123,17 +123,19 @@
 					pause: false,
 					finish: false,
 					buffering: false,
-					timeupdate: false
+					timeupdate: false,
+					volumechange: false,
+					durationchange: false
 				},
 				detail: {}
 			};
 
 			$.data(self,'embedplayer',data);
-			$.attr(self,'data-embedplayer-id',String(data.player_id));
 
 			var ok = false;
 			try {
 				module.init.call(self,data);
+				$.attr(self,'data-embedplayer-id',data.player_id);
 				ok = true;
 			}
 			finally {
@@ -141,7 +143,6 @@
 					// do it like that because catch and re-throw
 					// changes the stack trace in some browsers
 					$.removeData(self,'embedplayer');
-					$.removeAttr(self,'data-embedplayer-id');
 				}
 			}
 		}
@@ -171,10 +172,21 @@
 			});
 			break;
 
+		case "seek":
+			var position = Number(arguments[1]);
+			this.each(function () {
+				var data = init(this,options);
+				data.module.seek.call(this,data,position);
+			});
+			break;
+
 		case "listen":
 			var events = arguments.length > 1 ?
-				$.trim(arguments[1]).split(/\s+/) :
-				["ready","play","pause","finish","buffering","timeupdate"];
+				arguments[1] :
+				["ready","play","pause","finish","buffering","timeupdate","volumechange","durationchange"];
+			if (!$.isArray(events)) {
+				events = $.trim(events).split(/\s+/);
+			}
 			this.each(function () {
 				var data = init(this);
 				data.module.listen.call(this,data,events);
@@ -185,7 +197,7 @@
 			break;
 			
 		case "volume":
-			if (arguments.length > 1) {
+			if (arguments.length > 1 && typeof(arguments[1]) !== "function") {
 				var volume = Number(arguments[1]);
 				this.each(function () {
 					var data = init(this);
@@ -193,22 +205,22 @@
 				});
 			}
 			else if (this.length === 0) {
-				return NaN;
+				(arguments[1]||$.noop)(NaN);
 			}
 			else {
 				var data = init(this[0]);
-				return data.module.volume.call(this[0],data);
+				return data.module.volume.call(this[0],data,arguments[1]||$.noop);
 			}
 			break;
 
 		case "duration":
 		case "currenttime":
 			if (this.length === 0) {
-				return NaN;
+				(arguments[1]||$.noop)(NaN);
 			}
 			else {
 				var data = init(this[0]);
-				return data.module[command].call(this[0],data);
+				return data.module[command].call(this[0],data,arguments[1]||$.noop);
 			}
 			break;
 			
@@ -242,6 +254,7 @@
 						var state = null;
 						switch (type) {
 						case "timeupdate":
+						case "volumechange":
 							break;
 
 						case "ready":
@@ -272,7 +285,7 @@
 						data.state = state;
 						if (data.listening[type] === true) {
 							var $element = $(element);
-							if (state) $element.trigger($.Event('embedplayer:statechange',{state:sate}));
+							if (state) $element.trigger($.Event('embedplayer:statechange',{state:state}));
 							$element.trigger($.Event('embedplayer:'+type,properties));
 						}
 					};

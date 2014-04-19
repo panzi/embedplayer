@@ -1,16 +1,20 @@
 (function ($, undefined) {
 	"use strict";
 
+	var next_id = 1;
+
 	$.embedplayer.register({
 		origin: 'https://www.youtube.com',
 		matches: function () {
-			return $.nodeName(this,"iframe") && /^https?:\/\/(www\.)?youtube(-nocookie)?\.com\/embed\/[-_a-z0-9]+/i.test($.prop(this,"src"));
+			return $.nodeName(this,"iframe") && /^https?:\/\/(www\.)?youtube(-nocookie)?\.com\/embed\/[-_a-z0-9]+.*[\?&]enablejsapi=1/i.test($.prop(this,"src"));
 		},
 		init: function (data) {
 			var self = this;
+			data.detail.player_id = next_id ++;
+			data.player_id = 'youtube_'+data.detail.player_id;
 			data.detail.duration = NaN;
 			data.detail.currenttime = NaN;
-			data.detail.volume = 1.0;
+			data.detail.volume = NaN;
 			data.detail.commands = [];
 			data.detail.video_id = /^https?:\/\/(?:www\.)?youtube(?:-nocookie)?\.com\/embed\/([-_a-z0-9]+)/i.exec(this.src)[1];
 			data.detail.timer = setInterval(function () {
@@ -20,7 +24,7 @@
 					return;
 				}
 				else if (self.contentWindow) {
-					self.contentWindow.postMessage(JSON.stringify({event:'listening',id:data.player_id}),"https://www.youtube.com");
+					self.contentWindow.postMessage(JSON.stringify({event:'listening',id:data.detail.player_id}),"https://www.youtube.com");
 				}
 			}, 500);
 		},
@@ -33,17 +37,17 @@
 		stop: function (data) {
 			send(this,data,"stopVideo");
 		},
-		volume: function (data) {
-			return data.detail.volume;
+		volume: function (data, callback) {
+			callback(data.detail.volume);
+		},
+		duration: function (data, callback) {
+			callback(data.detail.duration);
+		},
+		currenttime: function (data) {
+			callback(data.detail.currenttime);
 		},
 		setVolume: function (data,volume) {
 			send(this,data,'setVolume',volume);
-		},
-		duration: function (data) {
-			return data.detail.duration;
-		},
-		currenttime: function (data) {
-			return data.detail.currenttime;
 		},
 		seek: function (data,position) {
 			send(this,data,'seekTo',position);
@@ -55,7 +59,7 @@
 			var message = {
 				data: JSON.parse(event.data)
 			};
-			message.player_id = message.data.id;
+			message.player_id = 'youtube_'+message.data.id;
 			return message;
 		},
 		processMessage: function (data,message,trigger) {
@@ -77,11 +81,24 @@
 				trigger("ready");
 			}
 			else if (message.data.event === "infoDelivery") {
-				// TODO: timeupdate, duration, volume etc.
-				console.log(message.data);
-				if (message.data.info) {
-					if ('playerState' in message.data.info) {
-						switch (message.data.info.playerState) {
+				var info = message.data.info;
+				if (info) {
+					if ('volume' in info) {
+						var volume;
+						if (info.muted) {
+							volume = 0.0;
+						}
+						else {
+							volume = info.volume / 100;
+						}
+						if (data.detail.volume !== volume) {
+							data.detail.volume = volume;
+							trigger("volumechange",{volume:volume});
+						}
+					}
+
+					if ('playerState' in info) {
+						switch (info.playerState) {
 						case -1: // unstarted
 							break;
 
@@ -106,6 +123,28 @@
 							break;
 						}
 					}
+
+					if ('duration' in info) {
+						if (info.duration !== data.detail.duration) {
+							data.detail.duration = info.duration;
+							trigger("durationchange",{duration:info.duration});
+						}
+					}
+
+					if ('currentTime' in info) {
+						if (info.currentTime !== data.detail.currenttime) {
+							data.detail.currenttime = info.currentTime;
+							trigger("timeupdate",{currentTime:info.currentTime});
+						}
+					}
+
+					if ('videoData' in info) {
+						data.detail.videoData = info.videoData;
+					}
+					
+					if ('availableQualityLevels' in info) {
+						data.detail.availableQualityLevels = info.availableQualityLevels;
+					}
 				}
 			}
 		}
@@ -113,7 +152,7 @@
 
 	function send (element,data,func) {
 		var command = {
-			id: data.player_id,
+			id: data.detail.player_id,
 			event: "command",
 			func: func,
 			args: Array.prototype.slice.call(arguments,3)

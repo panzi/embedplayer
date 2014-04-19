@@ -6,17 +6,41 @@
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script type="text/javascript" src="../src/embedplayer.js"></script>
 <script type="text/javascript" src="../src/youtube.js"></script>
+<script type="text/javascript" src="../src/vimeo.js"></script>
 <script type="text/javascript">
 // <![CDATA[
-$(document).ready(function () {
+
+function init () {
 	$('#video').on('embedplayer:statechange', function (event) {
 		$('#state').text(event.state);
-	});
-});
+	}).on('embedplayer:durationchange', function (event) {
+		$('#duration').text(event.duration+'s');
+	}).on('embedplayer:timeupdate', function (event) {
+		$('#currenttime').text(event.currentTime+'s');
+	}).on('embedplayer:volumechange', function (event) {
+		$('#volume').text(event.volume);
+	}).embedplayer("listen");
+}
+
+function showPlayer (url) {
+	$('#video').clone(false).attr('src',url).replaceAll('#video');
+	$('#duration, #currenttime, #volume').text('?');
+	$('#state').text('loading...');
+	init();
+}
+
+$(document).ready(init);
 // ]]>
 </script>
 </head>
 <body>
+
+<p>
+<label>embed: <select id="embed" onchange="showPlayer(this.value);">
+<option value="https://www.youtube.com/embed/eRsGyueVLvQ?enablejsapi=1" selected>YouTube (Sintel)</option>
+<option value="http://player.vimeo.com/video/1084537?api=1&amp;player_id=vimeo_1">Vimeo (Big Buck Bunny)</option>
+</select>
+</p>
 
 <p>
 <iframe id="video" width="640" height="360" src="https://www.youtube.com/embed/eRsGyueVLvQ?enablejsapi=1" frameborder="0" allowfullscreen></iframe>
@@ -26,6 +50,11 @@ $(document).ready(function () {
 <button onclick="$('#video').embedplayer('play');">Play</button>
 <button onclick="$('#video').embedplayer('pause');">Pause</button>
 <button onclick="$('#video').embedplayer('stop');">Stop</button>
+<button onclick="$('#video').embedplayer('seek',10);">Seek 10s</button>
+<button onclick="$('#video').embedplayer('seek',3*60);">Seek 3m</button>
+<span>duration: <span id="duration">?</span></span>
+<span>current time: <span id="currenttime">?</span></span>
+<span>volume: <span id="volume">?</span></span>
 <span id="state">loading...</span>
 </p>
 
