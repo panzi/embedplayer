@@ -52,6 +52,12 @@ $(document).ready(init);
 <button onclick="$('#video').embedplayer('stop');">Stop</button>
 <button onclick="$('#video').embedplayer('seek',10);">Seek 10s</button>
 <button onclick="$('#video').embedplayer('seek',3*60);">Seek 3m</button>
+<button onclick="$('#video').embedplayer('volume',0.0);">Volume 0%</button>
+<button onclick="$('#video').embedplayer('volume',0.5);">Volume 50%</button>
+<button onclick="$('#video').embedplayer('volume',1.0);">Volume 100%</button>
+</p>
+
+</p>
 <span>duration: <span id="duration">?</span></span>
 <span>current time: <span id="currenttime">?</span></span>
 <span>volume: <span id="volume">?</span></span>

@@ -47,7 +47,7 @@
 			callback(data.detail.currenttime);
 		},
 		setVolume: function (data,volume) {
-			send(this,data,'setVolume',volume);
+			send(this,data,'setVolume',volume*100);
 		},
 		seek: function (data,position) {
 			send(this,data,'seekTo',position);
