@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+<title>Demo</title>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script type="text/javascript" src="../src/embedplayer.js"></script>
+<script type="text/javascript" src="../src/youtube.js"></script>
+<script type="text/javascript">
+// <![CDATA[
+$(document).ready(function () {
+	$('#video').on('embedplayer:statechange', function (event) {
+		$('#state').text(event.state);
+	});
+});
+// ]]>
+</script>
+</head>
+<body>
+
+<p>
+<iframe id="video" width="640" height="360" src="https://www.youtube.com/embed/eRsGyueVLvQ?enablejsapi=1" frameborder="0" allowfullscreen></iframe>
+</p>
+
+<p>
+<button onclick="$('#video').embedplayer('play');">Play</button>
+<button onclick="$('#video').embedplayer('pause');">Pause</button>
+<button onclick="$('#video').embedplayer('stop');">Stop</button>
+<span id="state">loading...</span>
+</p>
+
+</body>
+</html>
