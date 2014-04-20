@@ -1,9 +1,12 @@
 // $('.videos').embedplayer(); // just initilaize APIs
 // $('.videos').embedplayer('listen','ready play pause finish buffering timeupdate volumechange durationchange');
+// $('.videos').embedplayer('listen'); // listen to all events
 // $('.videos').embedplayer('play');
 // $('.videos').embedplayer('pause');
 // $('.videos').embedplayer('toggle');
 // $('.videos').embedplayer('stop');
+// $('.videos').embedplayer('next');
+// $('.videos').embedplayer('prev');
 // $('.videos').embedplayer('volume',value);
 // $('.videos').embedplayer('volume') -> Number;
 // $('.videos').embedplayer('currenttime') -> Number;
@@ -40,6 +43,8 @@
 				}
 			},
 			stop: function (data) { data.module.pause(data); },
+			next: function (data) {},
+			prev: function (data) {},
 			listen: function (data,events) {},
 			volume: function (data,callback) { callback(NaN); },
 			duration: function (data,callback) { callback(NaN); },
@@ -228,6 +233,8 @@
 		case "pause":
 		case "stop":
 		case "toggle":
+		case "next":
+		case "prev":
 			this.each(function () {
 				var data = init(this,options);
 				data.module[command].call(this,data);

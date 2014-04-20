@@ -39,6 +39,7 @@ $(document).ready(init);
 <p>
 <label>embed: <select id="embed" onchange="showPlayer(this.value);">
 <option value="https://www.youtube.com/embed/eRsGyueVLvQ?enablejsapi=1" selected>YouTube (Sintel)</option>
+<option value="https://www.youtube.com/embed/YE7VzlLtp-4?list=PL6B3937A5D230E335&amp;enablejsapi=1">YouTube (Playlist)</option>
 <option value="http://player.vimeo.com/video/1084537?api=1&amp;player_id=vimeo_1">Vimeo (Big Buck Bunny)</option>
 <option value="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/3297874&amp;auto_play=false&amp;hide_related=false&amp;visual=true">SoundCloud (Theophany - Times End)</option>
 </select>
@@ -52,6 +53,8 @@ $(document).ready(init);
 <button onclick="$('#video').embedplayer('play');">Play</button>
 <button onclick="$('#video').embedplayer('pause');">Pause</button>
 <button onclick="$('#video').embedplayer('stop');">Stop</button>
+<button onclick="$('#video').embedplayer('prev');">Previous</button>
+<button onclick="$('#video').embedplayer('next');">Next</button>
 <button onclick="$('#video').embedplayer('seek',10);">Seek 10s</button>
 <button onclick="$('#video').embedplayer('seek',2*60);">Seek 2m</button>
 <button onclick="$('#video').embedplayer('volume',0.0);">Volume 0%</button>

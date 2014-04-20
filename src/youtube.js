@@ -12,6 +12,7 @@
 			var self = this;
 			data.detail.player_id = next_id ++;
 			callback('youtube_'+data.detail.player_id);
+			data.detail.origin = /^https?:\/\/(www\.)?youtube-nocookie\.com\//i.test(this.src) ? 'https://www.youtube-nocookie.com' : 'https://www.youtube.com';
 			data.detail.duration = NaN;
 			data.detail.currenttime = NaN;
 			data.detail.volume = NaN;
@@ -24,7 +25,7 @@
 					return;
 				}
 				else if (self.contentWindow) {
-					self.contentWindow.postMessage(JSON.stringify({event:'listening',id:data.detail.player_id}),"https://www.youtube.com");
+					self.contentWindow.postMessage(JSON.stringify({event:'listening',id:data.detail.player_id}),data.detail.origin);
 				}
 			}, 500);
 		},
@@ -36,6 +37,12 @@
 		},
 		stop: function (data) {
 			send(this,data,"stopVideo");
+		},
+		next: function (data) {
+			send(this,data,"nextVideo");
+		},
+		prev: function (data) {
+			send(this,data,"previousVideo");
 		},
 		volume: function (data, callback) {
 			callback(data.detail.volume);
@@ -74,7 +81,7 @@
 				var win = this.contentWindow;
 				if (win && data.detail.commands) {
 					for (var i = 0; i < data.detail.commands.length; ++ i) {
-						win.postMessage(JSON.stringify(data.detail.commands[i]),"https://www.youtube.com");
+						win.postMessage(JSON.stringify(data.detail.commands[i]),data.detail.origin);
 					}
 					data.detail.commands = null;
 				}
@@ -163,7 +170,7 @@
 		else {
 			var win = element.contentWindow;
 			if (win) {
-				win.postMessage(JSON.stringify(command),"https://www.youtube.com");
+				win.postMessage(JSON.stringify(command),data.detail.origin);
 			}
 		}
 	}

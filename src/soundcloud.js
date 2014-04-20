@@ -74,6 +74,12 @@
 		stop: function (data) {
 			send(this,data,"pause");
 		},
+		next: function (data) {
+			send(this,data,"next");
+		},
+		prev: function (data) {
+			send(this,data,"prev");
+		},
 		volume: function (data,callback) {
 			asyncCall(this,data,"getVolume",function (volume) {
 				callback(volume/100);
