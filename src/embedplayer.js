@@ -2,6 +2,7 @@
 // $('.videos').embedplayer('listen','ready play pause finish buffering timeupdate volumechange durationchange');
 // $('.videos').embedplayer('play');
 // $('.videos').embedplayer('pause');
+// $('.videos').embedplayer('toggle');
 // $('.videos').embedplayer('stop');
 // $('.videos').embedplayer('volume',value);
 // $('.videos').embedplayer('volume') -> Number;
@@ -30,6 +31,14 @@
 			init: function (data,callback) { callback('id_'+(new Date().getTime())); },
 			play: function (data) {},
 			pause: function (data) {},
+			toggle: function (data) {
+				if (data.state === "playing") {
+					data.module.pause.call(this,data);
+				}
+				else {
+					data.module.play.call(this,data);
+				}
+			},
 			stop: function (data) { data.module.pause(data); },
 			listen: function (data,events) {},
 			volume: function (data,callback) { callback(NaN); },
@@ -218,6 +227,7 @@
 		case "play":
 		case "pause":
 		case "stop":
+		case "toggle":
 			this.each(function () {
 				var data = init(this,options);
 				data.module[command].call(this,data);
