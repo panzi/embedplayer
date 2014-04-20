@@ -12,30 +12,17 @@
 		volumechange: null
 	};
 
-	function parseParams (search) {
-		var params = {};
-		if (search) {
-			search = search.split("&");
-			for (var i = 0; i < search.length; ++ i) {
-				var param = search[i].split("=");
-				params[decodeURIComponent(param[0])] = decodeURIComponent(param.slice(1));
-			}
-		}
-		return params;
-	}
-
 	$.embedplayer.register({
 		origin: ['https://player.vimeo.com',"http://player.vimeo.com"],
 		matches: function () {
-			return $.nodeName(this,"iframe") && /^https?:\/\/player\.vimeo\.com\/video\/\d+.*[\?&]api=1/i.test($.prop(this,"src"));
+			return $.nodeName(this,"iframe") && /^https?:\/\/player\.vimeo\.com\/video\/\d+.*[\?&]api=1/i.test(this.src);
 		},
-		init: function (data) {
-			var self = this;
+		init: function (data,callback) {
 			var match = /^https?:\/\/player\.vimeo\.com\/video\/(\d+)[^\?#]*(?:\?(.*))/i.exec(this.src);
 			var video_id = match[1];
-			var params = parseParams(match[2]);
+			var params = $.embedplayer.parseParams(match[2]);
 
-			data.player_id = params.player_id;
+			callback(params.player_id);
 			data.detail.duration = NaN;
 			data.detail.currenttime = NaN;
 			data.detail.commands = [];
@@ -95,7 +82,9 @@
 		},
 		processMessage: function (data,message,trigger) {
 			if (message.data.event === "ready") {
-				data.state = "ready";
+				trigger("ready");
+				// get the initial volume value
+				send(this,data,"getVolume");
 				var win = this.contentWindow;
 				if (win && data.detail.commands) {
 					for (var i = 0; i < data.detail.commands.length; ++ i) {
@@ -103,9 +92,6 @@
 					}
 					data.detail.commands = null;
 				}
-				trigger("ready");
-				// get the initial volume value
-				send(this,data,"getVolume");
 			}
 			else if (message.data.event === "playProgress") {
 				if ('seconds' in message.data.data) {

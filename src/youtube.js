@@ -6,12 +6,12 @@
 	$.embedplayer.register({
 		origin: 'https://www.youtube.com',
 		matches: function () {
-			return $.nodeName(this,"iframe") && /^https?:\/\/(www\.)?youtube(-nocookie)?\.com\/embed\/[-_a-z0-9]+.*[\?&]enablejsapi=1/i.test($.prop(this,"src"));
+			return $.nodeName(this,"iframe") && /^https?:\/\/(www\.)?youtube(-nocookie)?\.com\/embed\/[-_a-z0-9]+.*[\?&]enablejsapi=1/i.test(this.src);
 		},
-		init: function (data) {
+		init: function (data,callback) {
 			var self = this;
 			data.detail.player_id = next_id ++;
-			data.player_id = 'youtube_'+data.detail.player_id;
+			callback('youtube_'+data.detail.player_id);
 			data.detail.duration = NaN;
 			data.detail.currenttime = NaN;
 			data.detail.volume = NaN;
@@ -70,7 +70,7 @@
 				}
 			}
 			else if (message.data.event === "onReady") {
-				data.state = "ready";
+				trigger("ready");
 				var win = this.contentWindow;
 				if (win && data.detail.commands) {
 					for (var i = 0; i < data.detail.commands.length; ++ i) {
@@ -78,7 +78,6 @@
 					}
 					data.detail.commands = null;
 				}
-				trigger("ready");
 			}
 			else if (message.data.event === "infoDelivery") {
 				var info = message.data.info;

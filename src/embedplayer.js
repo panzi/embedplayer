@@ -27,14 +27,14 @@
 		modules_by_origin: {},
 		defaults: {
 			matches: function () { return false; },
-			init: function (data) {},
+			init: function (data,callback) { callback('id_'+(new Date().getTime())); },
 			play: function (data) {},
 			pause: function (data) {},
-			stop: function (data) {},
+			stop: function (data) { data.module.pause(data); },
 			listen: function (data,events) {},
-			volume: function (data, callback) { callback(NaN); },
-			duration: function (data, callback) { callback(NaN); },
-			currenttime: function (data, callback) { callback(NaN); },
+			volume: function (data,callback) { callback(NaN); },
+			duration: function (data,callback) { callback(NaN); },
+			currenttime: function (data,callback) { callback(NaN); },
 			setVolume: function (data,volume) {},
 			seek: function (data,position) {},
 			link: function (data) { return null; },
@@ -61,6 +61,56 @@
 			}
 			else {
 				return location.protocol+'//'+location.host;
+			}
+		},
+		parseParams: function (search) {
+			var params = {};
+			if (search) {
+				search = search.split("&");
+				for (var i = 0; i < search.length; ++ i) {
+					var param = search[i].split("=");
+					params[decodeURIComponent(param[0])] = decodeURIComponent(param.slice(1));
+				}
+			}
+			return params;
+		},
+		trigger: function (self,data,type,properties) {
+			var state = null;
+			switch (type) {
+			case "timeupdate":
+			case "volumechange":
+				break;
+
+			case "ready":
+				state = "ready";
+				break;
+
+			case "play":
+				state = "playing";
+				break;
+
+			case "pause":
+				state = "paused";
+				break;
+
+			case "finish":
+				state = "finished";
+				break;
+
+			case "buffering":
+				state = "buffering";
+				break;
+			}
+
+			if (state && state === data.state) {
+				return;
+			}
+
+			data.state = state;
+			if (data.listening[type] === true) {
+				var $self = $(self);
+				if (state) $self.trigger($.Event('embedplayer:statechange',{state:state}));
+				$self.trigger($.Event('embedplayer:'+type,properties));
 			}
 		}
 	};
@@ -134,8 +184,10 @@
 
 			var ok = false;
 			try {
-				module.init.call(self,data);
-				$.attr(self,'data-embedplayer-id',data.player_id);
+				module.init.call(self,data,function (player_id) {
+					data.player_id = player_id;
+					$.attr(self,'data-embedplayer-id',data.player_id);
+				});
 				ok = true;
 			}
 			finally {
@@ -249,47 +301,7 @@
 			if (message) {
 				$('[data-embedplayer-id="'+message.player_id+'"]').each(function () {
 					var data = init(this);
-					var element = this;
-					var trigger = function (type,properties) {
-						var state = null;
-						switch (type) {
-						case "timeupdate":
-						case "volumechange":
-							break;
-
-						case "ready":
-							state = "ready";
-							break;
-
-						case "play":
-							state = "playing";
-							break;
-
-						case "pause":
-							state = "paused";
-							break;
-
-						case "finish":
-							state = "finished";
-							break;
-
-						case "buffering":
-							state = "buffering";
-							break;
-						}
-
-						if (state && state === data.state) {
-							return;
-						}
-
-						data.state = state;
-						if (data.listening[type] === true) {
-							var $element = $(element);
-							if (state) $element.trigger($.Event('embedplayer:statechange',{state:state}));
-							$element.trigger($.Event('embedplayer:'+type,properties));
-						}
-					};
-					data.module.processMessage.call(this,data,message,trigger);
+					data.module.processMessage.call(this,data,message,$.embedplayer.trigger.bind($.embedplayer,this,data));
 				});
 			}
 		}
