@@ -141,10 +141,18 @@
 					data.detail.callbacks[message.data.method] = null;
 				}
 				if (message.data.method === "getVolume") {
-					trigger("volumechange",{volume:message.data.value});
+					var volume = message.data.value/100;
+					if (data.detail.volume !== volume) {
+						data.detail.volume = volume;
+						trigger("volumechange",{volume:volume});
+					}
 				}
 				else if (message.data.method === "getDuration") {
-					trigger("durationchange",{duration:message.data.value});
+					var duration = message.data.value/1000;
+					if (data.detail.duration !== duration) {
+						data.detail.duration = duration;
+						trigger("durationchange",{duration:duration});
+					}
 				}
 			}
 		}
