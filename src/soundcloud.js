@@ -19,7 +19,8 @@
 		buffering: null,
 		timeupdate: 'playProgress',
 		durationchange: 'loadProgress',
-		volumechange: null
+		volumechange: null,
+		error: 'error'
 	};
 
 	$.embedplayer.register({
@@ -30,10 +31,12 @@
 		init: function (data,callback) {
 			var match = /^https?:\/\/w\.soundcloud\.com\/player\/\?(.*)/i.exec(this.src);
 			var params = $.embedplayer.parseParams(match[1]);
-			match = /^https?:\/\/api\.soundcloud\.com\/([a-z]+)\/(\d+)/i.exec(params.url);
 
-			data.detail.item_type = match[1];
-			data.detail.item_id = match[2];
+			if (params.url && (match = /^https?:\/\/api\.soundcloud\.com\/([a-z]+)\/(\d+)/i.exec(params.url))) {
+				data.detail.item_type = match[1];
+				data.detail.item_id = match[2];
+			}
+
 			data.detail.duration = NaN;
 			data.detail.currenttime = NaN;
 			data.detail.commands = [];
@@ -41,6 +44,7 @@
 			data.detail.callbacks = {};
 
 			var self = this;
+
 			$(window).on('message', onmessage);
 			function onmessage (event) {
 				var raw = event.originalEvent;
@@ -137,6 +141,9 @@
 			}
 			else if (message.data.method === "finish") {
 				trigger("finish");
+			}
+			else if (message.data.method === "error") {
+				trigger("error",{error:"unknown"});
 			}
 			else if (message.data.method) {
 				var callbacks = data.detail.callbacks[message.data.method];

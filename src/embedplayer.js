@@ -1,5 +1,5 @@
 // $('.videos').embedplayer(); // just initilaize APIs
-// $('.videos').embedplayer('listen','ready play pause finish buffering timeupdate volumechange durationchange');
+// $('.videos').embedplayer('listen','ready play pause finish buffering timeupdate volumechange durationchange error');
 // $('.videos').embedplayer('listen'); // listen to all events
 // $('.videos').embedplayer('play');
 // $('.videos').embedplayer('pause');
@@ -22,6 +22,7 @@
 // $('.videos').on('embedplayer:timeupdate', handler);
 // $('.videos').on('embedplayer:volumechange', handler);
 // $('.videos').on('embedplayer:durationchange', handler);
+// $('.videos').on('embedplayer:error', handler);
 
 (function ($, undefined) {
 	"use strict";
@@ -83,16 +84,19 @@
 				search = search.split("&");
 				for (var i = 0; i < search.length; ++ i) {
 					var param = search[i].split("=");
-					params[decodeURIComponent(param[0])] = decodeURIComponent(param.slice(1));
+					params[decodeURIComponent(param[0])] = decodeURIComponent(param.slice(1).join("="));
 				}
 			}
 			return params;
 		},
 		trigger: function (self,data,type,properties) {
 			var state = null;
+
 			switch (type) {
 			case "timeupdate":
 			case "volumechange":
+			case "durationchange":
+			case "error":
 				break;
 
 			case "ready":
@@ -120,7 +124,10 @@
 				return;
 			}
 
-			data.state = state;
+			if (state !== null) {
+				data.state = state;
+			}
+
 			if (data.listening[type] === true) {
 				var $self = $(self);
 				if (state) $self.trigger($.Event('embedplayer:statechange',{state:state}));
@@ -189,7 +196,8 @@
 					buffering: false,
 					timeupdate: false,
 					volumechange: false,
-					durationchange: false
+					durationchange: false,
+					error: false
 				},
 				detail: {}
 			};
@@ -252,7 +260,7 @@
 		case "listen":
 			var events = arguments.length > 1 ?
 				arguments[1] :
-				["ready","play","pause","finish","buffering","timeupdate","volumechange","durationchange"];
+				["ready","play","pause","finish","buffering","timeupdate","volumechange","durationchange","error"];
 			if (!$.isArray(events)) {
 				events = $.trim(events).split(/\s+/);
 			}

@@ -1,6 +1,18 @@
 (function ($, undefined) {
 	"use strict";
 
+	var event_map = {
+		ready: null,
+		play: null,
+		pause: null,
+		finish: null,
+		buffering: null,
+		timeupdate: null,
+		durationchange: null,
+		volumechange: null,
+		error: "onError"
+	};
+
 	var next_id = 1;
 
 	$.embedplayer.register({
@@ -59,6 +71,16 @@
 		seek: function (data,position) {
 			send(this,data,'seekTo',position);
 		},
+		listen: function (data,events) {
+			var done = {};
+			for (var i = 0; i < events.length; ++ i) {
+				var event = event_map[events[i]];
+				if (event && done[event] !== true) {
+					done[event] = true;
+					send(this,data,'addEventListener',event);
+				}
+			}
+		},
 		link: function (data) {
 			return 'https://www.youtube.com/watch?v='+data.detail.video_id;
 		},
@@ -70,23 +92,7 @@
 			return message;
 		},
 		processMessage: function (data,message,trigger) {
-			if (message.data.event === "initialDelivery") {
-				if (data.detail.timer !== null) {
-					clearInterval(data.detail.timer);
-					data.detail.timer = null;
-				}
-			}
-			else if (message.data.event === "onReady") {
-				trigger("ready");
-				var win = this.contentWindow;
-				if (win && data.detail.commands) {
-					for (var i = 0; i < data.detail.commands.length; ++ i) {
-						win.postMessage(JSON.stringify(data.detail.commands[i]),data.detail.origin);
-					}
-					data.detail.commands = null;
-				}
-			}
-			else if (message.data.event === "infoDelivery") {
+			if (message.data.event === "infoDelivery") {
 				var info = message.data.info;
 				if (info) {
 					if ('volume' in info) {
@@ -152,6 +158,43 @@
 						data.detail.availableQualityLevels = info.availableQualityLevels;
 					}
 				}
+			}
+			else if (message.data.event === "initialDelivery") {
+				if (data.detail.timer !== null) {
+					clearInterval(data.detail.timer);
+					data.detail.timer = null;
+				}
+			}
+			else if (message.data.event === "onReady") {
+				trigger("ready");
+				var win = this.contentWindow;
+				if (win && data.detail.commands) {
+					for (var i = 0; i < data.detail.commands.length; ++ i) {
+						win.postMessage(JSON.stringify(data.detail.commands[i]),data.detail.origin);
+					}
+					data.detail.commands = null;
+				}
+			}
+			else if (message.data.event === "onError") {
+				var error;
+				switch (message.data.info) {
+				case 2: // The request contains an invalid parameter value.
+					error = "illegal_parameter";
+					break;
+
+				case 100: // The video requested was not found.
+					error = "not_found";
+					break;
+
+				case 101: // The owner of the requested video does not allow it to be played in embedded players.
+				case 150: // This error is the same as 101. It's just a 101 error in disguise!
+					error = "forbidden";
+					break;
+
+				default:
+					error = "unknown";
+				}
+				trigger("error",{error:error});
 			}
 		}
 	});

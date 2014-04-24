@@ -9,7 +9,8 @@
 		buffering: null,
 		timeupdate: 'playProgress',
 		durationchange: 'loadProgress',
-		volumechange: null
+		volumechange: null,
+		error: null
 	};
 
 	$.embedplayer.register({
