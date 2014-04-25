@@ -29,7 +29,7 @@
 			return $.nodeName(this,"iframe") && /^https?:\/\/w\.soundcloud\.com\/player\/\?/i.test(this.src);
 		},
 		init: function (data,callback) {
-			var match = /^https?:\/\/w\.soundcloud\.com\/player\/\?(.*)/i.exec(this.src);
+			var match = /^https?:\/\/w\.soundcloud\.com\/player\/\?([^#]*)/i.exec(this.src);
 			var params = $.embedplayer.parseParams(match[1]);
 
 			if (params.url && (match = /^https?:\/\/api\.soundcloud\.com\/([a-z]+)\/(\d+)/i.exec(params.url))) {
@@ -143,7 +143,7 @@
 				trigger("finish");
 			}
 			else if (message.data.method === "error") {
-				trigger("error",{error:"unknown"});
+				trigger("error",{error:"error"});
 			}
 			else if (message.data.method) {
 				var callbacks = data.detail.callbacks[message.data.method];

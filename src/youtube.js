@@ -192,7 +192,7 @@
 					break;
 
 				default:
-					error = "unknown";
+					error = "error";
 				}
 				trigger("error",{error:error});
 			}

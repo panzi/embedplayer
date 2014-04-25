@@ -208,7 +208,7 @@
 			try {
 				module.init.call(self,data,function (player_id) {
 					data.player_id = player_id;
-					$.attr(self,'data-embedplayer-id',data.player_id);
+					$.attr(self,'data-embedplayer-id',player_id === undefined ? '' : player_id);
 				});
 				ok = true;
 			}
