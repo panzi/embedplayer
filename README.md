@@ -62,7 +62,7 @@ API Reference
 
  * [volume](#volumecallback)
  * [currenttime](#currenttimecallback)
- * [duration](#duration-callback)
+ * [duration](#durationcallback)
  * [state](#state)
  * [link](#link)
 
