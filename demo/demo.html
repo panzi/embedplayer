@@ -39,6 +39,7 @@ function showPlayer (url) {
 	$('#video').clone(false).attr('src',url).replaceAll('#video');
 	$('#duration, #currenttime, #volume').text('?');
 	$('#state').text('loading...');
+	$('#error').text('');
 	init();
 }
 
