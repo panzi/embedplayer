@@ -1,29 +1,3 @@
-// $('.videos').embedplayer(); // just initilaize APIs
-// $('.videos').embedplayer('listen','ready play pause finish buffering timeupdate volumechange durationchange error');
-// $('.videos').embedplayer('listen'); // listen to all events
-// $('.videos').embedplayer('play');
-// $('.videos').embedplayer('pause');
-// $('.videos').embedplayer('toggle');
-// $('.videos').embedplayer('stop');
-// $('.videos').embedplayer('next');
-// $('.videos').embedplayer('prev');
-// $('.videos').embedplayer('volume',value);
-// $('.videos').embedplayer('volume') -> Number;
-// $('.videos').embedplayer('currenttime') -> Number;
-// $('.videos').embedplayer('duration') -> Number;
-// $('.videos').embedplayer('state') -> "init" or "ready" or "playing" or "paused" or "finished" or "buffering";
-// $('.videos').embedplayer('link') -> String;
-// $('.videos').on('embedplayer:ready', handler);
-// $('.videos').on('embedplayer:play', handler);
-// $('.videos').on('embedplayer:pause', handler);
-// $('.videos').on('embedplayer:finish', handler);
-// $('.videos').on('embedplayer:buffering', handler);
-// $('.videos').on('embedplayer:statechange', handler);
-// $('.videos').on('embedplayer:timeupdate', handler);
-// $('.videos').on('embedplayer:volumechange', handler);
-// $('.videos').on('embedplayer:durationchange', handler);
-// $('.videos').on('embedplayer:error', handler);
-
 (function ($, undefined) {
 	"use strict";
 
