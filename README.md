@@ -51,33 +51,33 @@ API Reference
 ### Functions
 
  * [init](#init)
- * [listen](#listen-events)
+ * [listen](#listenevents)
  * [play](#play)
  * [pause](#pause)
  * [stop](#stop)
- * [seek](#seek-time)
- * [volume](#volume-value)
+ * [seek](#seektime)
+ * [volume](#volumevalue)
 
 ### Properties
 
- * [volume](#volume-callback)
- * [currenttime](#currenttime-callback)
+ * [volume](#volumecallback)
+ * [currenttime](#currenttimecallback)
  * [duration](#duration-callback)
  * [state](#state)
  * [link](#link)
 
 ### Events
 
- * [statechange](#embeplayer-statechange)
- * [ready](#embeplayer-ready)
- * [play](#embeplayer-play)
- * [pause](#embeplayer-pause)
- * [finish](#embeplayer-finish)
- * [buffering](#embeplayer-buffering)
- * [timeupdate](#embeplayer-timeupdate)
- * [volumechange](#embeplayer-volumechange)
- * [durationchange](#embeplayer-durationchange)
- * [error](#embeplayer-error)
+ * [statechange](#embeplayerstatechange)
+ * [ready](#embeplayerready)
+ * [play](#embeplayerplay)
+ * [pause](#embeplayerpause)
+ * [finish](#embeplayerfinish)
+ * [buffering](#embeplayerbuffering)
+ * [timeupdate](#embeplayertimeupdate)
+ * [volumechange](#embeplayervolumechange)
+ * [durationchange](#embeplayerdurationchange)
+ * [error](#embeplayererror)
 
 Functions
 ---------
