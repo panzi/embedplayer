@@ -62,7 +62,7 @@
 		duration: function (data, callback) {
 			callback(data.detail.duration);
 		},
-		currenttime: function (data) {
+		currenttime: function (data, callback) {
 			callback(data.detail.currenttime);
 		},
 		setVolume: function (data,volume) {
