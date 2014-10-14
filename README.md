@@ -117,7 +117,7 @@ $('#embed').embedplayer('listen',['timeupdate','error']);
 or to enable all events:
 
 ```javascript
-$('#embed').embedplayer('listen','timeupdate error');
+$('#embed').embedplayer('listen');
 ```
 
 ### play()
