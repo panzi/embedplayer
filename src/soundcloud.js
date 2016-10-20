@@ -1,14 +1,14 @@
 (function ($, undefined) {
 	"use strict";
 
-	function asyncCall (self,data,method,callback) {
+	function asyncCall (self, data, method, callback) {
 		if (method in data.detail.callbacks) {
 			data.detail.callbacks[method].push(callback);
 		}
 		else {
 			data.detail.callbacks[method] = [callback];
 		}
-		send(self,data,method);
+		send(self, data, method);
 	}
 
 	var event_map = {
@@ -24,11 +24,11 @@
 	};
 
 	$.embedplayer.register({
-		origin: ['https://w.soundcloud.com','http://w.soundcloud.com'],
+		origin: ['https://w.soundcloud.com', 'http://w.soundcloud.com'],
 		matches: function () {
-			return $.nodeName(this,"iframe") && /^https?:\/\/w\.soundcloud\.com\/player\/\?/i.test(this.src);
+			return $.nodeName(this, "iframe") && /^https?:\/\/w\.soundcloud\.com\/player\/\?/i.test(this.src);
 		},
-		init: function (data,callback) {
+		init: function (data, callback) {
 			var match = /^https?:\/\/w\.soundcloud\.com\/player\/\?([^#]*)/i.exec(this.src);
 			var params = $.embedplayer.parseParams(match[1]);
 
@@ -53,13 +53,13 @@
 					if (message.data.method === "ready") {
 						data.detail.widget_id = message.data.widgetId;
 						callback(message.player_id);
-						$.embedplayer.trigger(self,data,"ready");
+						$.embedplayer.trigger(self, data, "ready");
 						$(window).off('message', onmessage);
 						// initialize some data
-						send(self,data,'getDuration');
-						send(self,data,'getVolume');
+						send(self, data, 'getDuration');
+						send(self, data, 'getVolume');
 						for (var i = 0; i < data.detail.commands.length; ++ i) {
-							self.contentWindow.postMessage(JSON.stringify(data.detail.commands[i]),data.detail.origin);
+							self.contentWindow.postMessage(JSON.stringify(data.detail.commands[i]), data.detail.origin);
 						}
 						data.detail.commands = null;
 					}
@@ -70,48 +70,48 @@
 			}
 		},
 		play: function (data) {
-			send(this,data,"play");
+			send(this, data, "play");
 		},
 		pause: function (data) {
-			send(this,data,"pause");
+			send(this, data, "pause");
 		},
 		stop: function (data) {
-			send(this,data,"pause");
+			send(this, data, "pause");
 		},
 		next: function (data) {
-			send(this,data,"next");
+			send(this, data, "next");
 		},
 		prev: function (data) {
-			send(this,data,"prev");
+			send(this, data, "prev");
 		},
-		volume: function (data,callback) {
-			asyncCall(this,data,"getVolume",function (volume) {
+		volume: function (data, callback) {
+			asyncCall(this, data, "getVolume", function (volume) {
 				callback(volume/100);
 			});
 		},
-		duration: function (data,callback) {
-			asyncCall(this,data,"getDuration",function (duration) {
+		duration: function (data, callback) {
+			asyncCall(this, data, "getDuration", function (duration) {
 				callback(duration/1000);
 			});
 		},
-		currenttime: function (data,callback) {
-			asyncCall(this,data,"getPosition",function (position) {
+		currenttime: function (data, callback) {
+			asyncCall(this, data, "getPosition", function (position) {
 				callback(position/1000);
 			});
 		},
-		setVolume: function (data,volume) {
-			send(this,data,'setVolume',volume*100);
+		setVolume: function (data, volume) {
+			send(this, data, 'setVolume', volume*100);
 		},
-		seek: function (data,position) {
-			send(this,data,'seekTo',position*1000);
+		seek: function (data, position) {
+			send(this, data, 'seekTo', position*1000);
 		},
-		listen: function (data,events) {
+		listen: function (data, events) {
 			var done = {};
 			for (var i = 0; i < events.length; ++ i) {
 				var event = event_map[events[i]];
 				if (event && done[event] !== true) {
 					done[event] = true;
-					send(this,data,'addEventListener',event);
+					send(this, data, 'addEventListener', event);
 				}
 			}
 		},
@@ -125,12 +125,12 @@
 			message.player_id = "soundcloud_"+message.data.widgetId;
 			return message;
 		},
-		processMessage: function (data,message,trigger) {
+		processMessage: function (data, message, trigger) {
 			if (message.data.method === "playProgress") {
 				var currenttime = message.data.value.currentPosition/1000;
 				if (currenttime !== data.detail.currenttime) {
 					data.detail.currenttime = currenttime;
-					trigger('timeupdate',{currentTime:currenttime});
+					trigger('timeupdate', {currentTime:currenttime});
 				}
 			}
 			else if (message.data.method === "play") {
@@ -143,13 +143,13 @@
 				trigger("finish");
 			}
 			else if (message.data.method === "error") {
-				trigger("error",{error:"error"});
+				trigger("error", {error:"error"});
 			}
 			else if (message.data.method) {
 				var callbacks = data.detail.callbacks[message.data.method];
 				if (callbacks) {
 					for (var i = 0; i < callbacks.length; ++ i) {
-						callbacks[i].call(this,message.data.value);
+						callbacks[i].call(this, message.data.value);
 					}
 					data.detail.callbacks[message.data.method] = null;
 				}
@@ -157,21 +157,21 @@
 					var volume = message.data.value/100;
 					if (data.detail.volume !== volume) {
 						data.detail.volume = volume;
-						trigger("volumechange",{volume:volume});
+						trigger("volumechange", {volume:volume});
 					}
 				}
 				else if (message.data.method === "getDuration") {
 					var duration = message.data.value/1000;
 					if (data.detail.duration !== duration) {
 						data.detail.duration = duration;
-						trigger("durationchange",{duration:duration});
+						trigger("durationchange", {duration:duration});
 					}
 				}
 			}
 		}
 	});
 
-	function send (element,data,method,value) {
+	function send (element, data, method, value) {
 		var command = {
 			method: method
 		};
@@ -186,7 +186,7 @@
 		else {
 			var win = element.contentWindow;
 			if (win) {
-				win.postMessage(JSON.stringify(command),data.detail.origin);
+				win.postMessage(JSON.stringify(command), data.detail.origin);
 			}
 		}
 	}

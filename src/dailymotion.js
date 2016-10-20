@@ -2,11 +2,11 @@
 	"use strict";
 
 	$.embedplayer.register({
-		origin: ['https://www.dailymotion.com',"http://www.dailymotion.com"],
+		origin: ['https://www.dailymotion.com', "http://www.dailymotion.com"],
 		matches: function () {
-			return $.nodeName(this,"iframe") && /^https?:\/\/(?:www\.)?dailymotion\.com\/embed\/video\/[-_a-z0-9]+[\?&]api=postMessage/i.test(this.src);
+			return $.nodeName(this, "iframe") && /^https?:\/\/(?:www\.)?dailymotion\.com\/embed\/video\/[-_a-z0-9]+[\?&]api=postMessage/i.test(this.src);
 		},
-		init: function (data,callback) {
+		init: function (data, callback) {
 			var match = /^https?:\/\/(?:www\.)?dailymotion\.com\/embed\/video\/([-_a-z0-9]+)\?([^#]*)/i.exec(this.src);
 			var video_id = match[1];
 			var params = $.embedplayer.parseParams(match[2]);
@@ -21,46 +21,46 @@
 			data.detail.callbacks = {};
 		},
 		play: function (data) {
-			send(this,data,"play");
+			send(this, data, "play");
 		},
 		pause: function (data) {
-			send(this,data,"pause");
+			send(this, data, "pause");
 		},
 		stop: function (data) {
-			send(this,data,"pause");
+			send(this, data, "pause");
 		},
-		volume: function (data,callback) {
+		volume: function (data, callback) {
 			callback(data.detail.volume);
 		},
-		duration: function (data,callback) {
+		duration: function (data, callback) {
 			callback(data.detail.duration);
 		},
-		currenttime: function (data,callback) {
+		currenttime: function (data, callback) {
 			callback(data.detail.currenttime);
 		},
-		setVolume: function (data,volume) {
-			send(this,data,'volume',volume);
+		setVolume: function (data, volume) {
+			send(this, data, 'volume', volume);
 		},
-		seek: function (data,position) {
-			send(this,data,'seek',position);
+		seek: function (data, position) {
+			send(this, data, 'seek', position);
 		},
 		link: function (data) {
 			return 'https://www.dailymotion.com/video/'+data.detail.video_id;
 		},
 		parseMessage: function (event) {
 			var message = {
-				data: $.embedplayer.parseParams(event.data.replace(/\+/g,' '))
+				data: $.embedplayer.parseParams(event.data.replace(/\+/g, ' '))
 			};
 			message.player_id = message.data.id;
 			return message;
 		},
-		processMessage: function (data,message,trigger) {
+		processMessage: function (data, message, trigger) {
 			switch (message.data.event) {
 			case "timeupdate":
 				var currenttime = parseFloat(message.data.time);
 				if (currenttime !== data.detail.currenttime) {
 					data.detail.currenttime = currenttime;
-					trigger('timeupdate',{currentTime:currenttime});
+					trigger('timeupdate', {currentTime:currenttime});
 				}
 				break;
 
@@ -78,7 +78,7 @@
 				}
 				if (volume !== data.detail.volume) {
 					data.detail.volume = volume;
-					trigger("volumechange",{volume:volume});
+					trigger("volumechange", {volume:volume});
 				}
 				break;
 
@@ -86,7 +86,7 @@
 				var duration = parseFloat(message.data.duration);
 				if (duration !== data.detail.duration) {
 					data.detail.duration = duration;
-					trigger("durationchange",{duration:duration});
+					trigger("durationchange", {duration:duration});
 				}
 				break;
 
@@ -103,7 +103,7 @@
 				break;
 				
 			case "error":
-				var statusCode = parseInt(message.data.statusCode,10);
+				var statusCode = parseInt(message.data.statusCode, 10);
 				var error = "error";
 
 				if (statusCode >= 100 && statusCode < 200) {
@@ -146,7 +146,7 @@
 					}
 				}
 
-				trigger("error",{
+				trigger("error", {
 					error:error,
 					statusCode:message.data.statusCode,
 					title:message.data.title,
@@ -158,7 +158,7 @@
 				var win = this.contentWindow;
 				if (win && data.detail.commands) {
 					for (var i = 0; i < data.detail.commands.length; ++ i) {
-						win.postMessage(data.detail.commands[i],data.detail.origin);
+						win.postMessage(data.detail.commands[i], data.detail.origin);
 					}
 					data.detail.commands = null;
 				}
@@ -170,7 +170,7 @@
 		}
 	});
 
-	function send (element,data,method,value) {
+	function send (element, data, method, value) {
 		var command = method;
 
 		if (arguments.length > 3) {
@@ -183,7 +183,7 @@
 		else {
 			var win = element.contentWindow;
 			if (win) {
-				win.postMessage(command,data.detail.origin);
+				win.postMessage(command, data.detail.origin);
 			}
 		}
 	}

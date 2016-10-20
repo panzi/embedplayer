@@ -18,9 +18,9 @@
 	$.embedplayer.register({
 		origin: 'https://www.youtube.com',
 		matches: function () {
-			return $.nodeName(this,"iframe") && /^https?:\/\/(www\.)?youtube(-nocookie)?\.com\/embed\/[-_a-z0-9]+.*[\?&]enablejsapi=1/i.test(this.src);
+			return $.nodeName(this, "iframe") && /^https?:\/\/(www\.)?youtube(-nocookie)?\.com\/embed\/[-_a-z0-9]+.*[\?&]enablejsapi=1/i.test(this.src);
 		},
-		init: function (data,callback) {
+		init: function (data, callback) {
 			var self = this;
 			data.detail.player_id = next_id ++;
 			callback('youtube_'+data.detail.player_id);
@@ -37,24 +37,24 @@
 					return;
 				}
 				else if (self.contentWindow) {
-					self.contentWindow.postMessage(JSON.stringify({event:'listening',id:data.detail.player_id}),data.detail.origin);
+					self.contentWindow.postMessage(JSON.stringify({event:'listening', id:data.detail.player_id}), data.detail.origin);
 				}
 			}, 500);
 		},
 		play: function (data) {
-			send(this,data,"playVideo");
+			send(this, data, "playVideo");
 		},
 		pause: function (data) {
-			send(this,data,"pauseVideo");
+			send(this, data, "pauseVideo");
 		},
 		stop: function (data) {
-			send(this,data,"stopVideo");
+			send(this, data, "stopVideo");
 		},
 		next: function (data) {
-			send(this,data,"nextVideo");
+			send(this, data, "nextVideo");
 		},
 		prev: function (data) {
-			send(this,data,"previousVideo");
+			send(this, data, "previousVideo");
 		},
 		volume: function (data, callback) {
 			callback(data.detail.volume);
@@ -65,19 +65,19 @@
 		currenttime: function (data, callback) {
 			callback(data.detail.currenttime);
 		},
-		setVolume: function (data,volume) {
-			send(this,data,'setVolume',volume*100);
+		setVolume: function (data, volume) {
+			send(this, data, 'setVolume', volume*100);
 		},
-		seek: function (data,position) {
-			send(this,data,'seekTo',position);
+		seek: function (data, position) {
+			send(this, data, 'seekTo', position);
 		},
-		listen: function (data,events) {
+		listen: function (data, events) {
 			var done = {};
 			for (var i = 0; i < events.length; ++ i) {
 				var event = event_map[events[i]];
 				if (event && done[event] !== true) {
 					done[event] = true;
-					send(this,data,'addEventListener',event);
+					send(this, data, 'addEventListener', event);
 				}
 			}
 		},
@@ -91,7 +91,7 @@
 			message.player_id = 'youtube_'+message.data.id;
 			return message;
 		},
-		processMessage: function (data,message,trigger) {
+		processMessage: function (data, message, trigger) {
 			if (message.data.event === "infoDelivery") {
 				var info = message.data.info;
 				if (info) {
@@ -105,7 +105,7 @@
 						}
 						if (data.detail.volume !== volume) {
 							data.detail.volume = volume;
-							trigger("volumechange",{volume:volume});
+							trigger("volumechange", {volume:volume});
 						}
 					}
 
@@ -139,14 +139,14 @@
 					if ('duration' in info) {
 						if (info.duration !== data.detail.duration) {
 							data.detail.duration = info.duration;
-							trigger("durationchange",{duration:info.duration});
+							trigger("durationchange", {duration:info.duration});
 						}
 					}
 
 					if ('currentTime' in info) {
 						if (info.currentTime !== data.detail.currenttime) {
 							data.detail.currenttime = info.currentTime;
-							trigger("timeupdate",{currentTime:info.currentTime});
+							trigger("timeupdate", {currentTime:info.currentTime});
 						}
 					}
 
@@ -170,7 +170,7 @@
 				var win = this.contentWindow;
 				if (win && data.detail.commands) {
 					for (var i = 0; i < data.detail.commands.length; ++ i) {
-						win.postMessage(JSON.stringify(data.detail.commands[i]),data.detail.origin);
+						win.postMessage(JSON.stringify(data.detail.commands[i]), data.detail.origin);
 					}
 					data.detail.commands = null;
 				}
@@ -194,17 +194,17 @@
 				default:
 					error = "error";
 				}
-				trigger("error",{error:error});
+				trigger("error", {error:error});
 			}
 		}
 	});
 
-	function send (element,data,func) {
+	function send (element, data, func) {
 		var command = {
 			id: data.detail.player_id,
 			event: "command",
 			func: func,
-			args: Array.prototype.slice.call(arguments,3)
+			args: Array.prototype.slice.call(arguments, 3)
 		};
 
 		if (data.state === "init") {
@@ -213,7 +213,7 @@
 		else {
 			var win = element.contentWindow;
 			if (win) {
-				win.postMessage(JSON.stringify(command),data.detail.origin);
+				win.postMessage(JSON.stringify(command), data.detail.origin);
 			}
 		}
 	}

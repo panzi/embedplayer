@@ -14,11 +14,11 @@
 	};
 
 	$.embedplayer.register({
-		origin: ['https://player.vimeo.com',"http://player.vimeo.com"],
+		origin: ['https://player.vimeo.com', "http://player.vimeo.com"],
 		matches: function () {
-			return $.nodeName(this,"iframe") && /^https?:\/\/player\.vimeo\.com\/video\/\d+.*[\?&]api=1/i.test(this.src);
+			return $.nodeName(this, "iframe") && /^https?:\/\/player\.vimeo\.com\/video\/\d+.*[\?&]api=1/i.test(this.src);
 		},
-		init: function (data,callback) {
+		init: function (data, callback) {
 			var match = /^https?:\/\/player\.vimeo\.com\/video\/(\d+)[^\?#]*(?:\?(.*))/i.exec(this.src);
 			var video_id = match[1];
 			var params = $.embedplayer.parseParams(match[2]);
@@ -32,42 +32,42 @@
 			data.detail.callbacks = {};
 		},
 		play: function (data) {
-			send(this,data,"play");
+			send(this, data, "play");
 		},
 		pause: function (data) {
-			send(this,data,"pause");
+			send(this, data, "pause");
 		},
 		stop: function (data) {
-			send(this,data,"unload");
+			send(this, data, "unload");
 		},
-		volume: function (data,callback) {
+		volume: function (data, callback) {
 			if (data.detail.callbacks.getVolume) {
 				data.detail.callbacks.getVolume.push(callback);
 			}
 			else {
 				data.detail.callbacks.getVolume = [callback];
 			}
-			send(this,data,"getVolume");
+			send(this, data, "getVolume");
 		},
-		duration: function (data,callback) {
+		duration: function (data, callback) {
 			callback(data.detail.duration);
 		},
-		currenttime: function (data,callback) {
+		currenttime: function (data, callback) {
 			callback(data.detail.currenttime);
 		},
-		setVolume: function (data,volume) {
-			send(this,data,'setVolume',volume);
+		setVolume: function (data, volume) {
+			send(this, data, 'setVolume', volume);
 		},
-		seek: function (data,position) {
-			send(this,data,'seekTo',position);
+		seek: function (data, position) {
+			send(this, data, 'seekTo', position);
 		},
-		listen: function (data,events) {
+		listen: function (data, events) {
 			var done = {};
 			for (var i = 0; i < events.length; ++ i) {
 				var event = event_map[events[i]];
 				if (event && done[event] !== true) {
 					done[event] = true;
-					send(this,data,'addEventListener',event);
+					send(this, data, 'addEventListener', event);
 				}
 			}
 		},
@@ -81,15 +81,15 @@
 			message.player_id = message.data.player_id;
 			return message;
 		},
-		processMessage: function (data,message,trigger) {
+		processMessage: function (data, message, trigger) {
 			if (message.data.event === "ready") {
 				trigger("ready");
 				// get the initial volume value
-				send(this,data,"getVolume");
+				send(this, data, "getVolume");
 				var win = this.contentWindow;
 				if (win && data.detail.commands) {
 					for (var i = 0; i < data.detail.commands.length; ++ i) {
-						win.postMessage(JSON.stringify(data.detail.commands[i]),data.detail.origin);
+						win.postMessage(JSON.stringify(data.detail.commands[i]), data.detail.origin);
 					}
 					data.detail.commands = null;
 				}
@@ -99,7 +99,7 @@
 					var currenttime = message.data.data.seconds;
 					if (currenttime !== data.detail.currenttime) {
 						data.detail.currenttime = currenttime;
-						trigger('timeupdate',{currentTime:currenttime});
+						trigger('timeupdate', {currentTime:currenttime});
 					}
 				}
 			}
@@ -108,7 +108,7 @@
 					var duration = message.data.data.duration;
 					if (duration !== data.detail.duration) {
 						data.detail.duration = duration;
-						trigger("durationchange",{duration:duration});
+						trigger("durationchange", {duration:duration});
 					}
 				}
 			}
@@ -125,18 +125,18 @@
 				var callbacks = data.detail.callbacks[message.data.method];
 				if (callbacks) {
 					for (var i = 0; i < callbacks.length; ++ i) {
-						callbacks[i].call(this,message.data.value);
+						callbacks[i].call(this, message.data.value);
 					}
 					data.detail.callbacks[message.data.method] = null;
 				}
 				if (message.data.method === "getVolume") {
-					trigger("volumechange",{volume:message.data.value});
+					trigger("volumechange", {volume:message.data.value});
 				}
 			}
 		}
 	});
 
-	function send (element,data,method,value) {
+	function send (element, data, method, value) {
 		var command = {
 			method: method
 		};
@@ -151,7 +151,7 @@
 		else {
 			var win = element.contentWindow;
 			if (win) {
-				win.postMessage(JSON.stringify(command),data.detail.origin);
+				win.postMessage(JSON.stringify(command), data.detail.origin);
 			}
 		}
 	}
