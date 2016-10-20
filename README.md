@@ -156,6 +156,16 @@ Example:
 $('#embed').embedplayer('seek',time);
 ```
 
+### supported()
+
+Example:
+
+```javascript
+if (!$('#embed').embedplayer('supported')) {
+	alert('Cannot control this embed!');
+}
+```
+
 ### volume(value)
 
 `value` is in the range of 0 to 1.

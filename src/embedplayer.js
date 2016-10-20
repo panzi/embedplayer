@@ -6,29 +6,29 @@
 		modules_by_origin: {},
 		defaults: {
 			matches: function () { return false; },
-			init: function (data,callback) { callback('id_'+(new Date().getTime())); },
+			init: function (data, callback) { callback('id_'+(new Date().getTime())); },
 			play: function (data) {},
 			pause: function (data) {},
 			toggle: function (data) {
 				if (data.state === "playing") {
-					data.module.pause.call(this,data);
+					data.module.pause.call(this, data);
 				}
 				else {
-					data.module.play.call(this,data);
+					data.module.play.call(this, data);
 				}
 			},
 			stop: function (data) { data.module.pause(data); },
 			next: function (data) {},
 			prev: function (data) {},
-			listen: function (data,events) {},
-			volume: function (data,callback) { callback(NaN); },
-			duration: function (data,callback) { callback(NaN); },
-			currenttime: function (data,callback) { callback(NaN); },
-			setVolume: function (data,volume) {},
-			seek: function (data,position) {},
+			listen: function (data, events) {},
+			volume: function (data, callback) { callback(NaN); },
+			duration: function (data, callback) { callback(NaN); },
+			currenttime: function (data, callback) { callback(NaN); },
+			setVolume: function (data, volume) {},
+			seek: function (data, position) {},
 			link: function (data) { return null; },
 			parseMessage: function (event) {},
-			processMessage: function (data,message,trigger) {},
+			processMessage: function (data, message, trigger) {},
 			origin: []
 		},
 		register: function (module) {
@@ -63,7 +63,7 @@
 			}
 			return params;
 		},
-		trigger: function (self,data,type,properties) {
+		trigger: function (self, data, type, properties) {
 			var state = null;
 
 			switch (type) {
@@ -104,8 +104,8 @@
 
 			if (data.listening[type] === true) {
 				var $self = $(self);
-				if (state) $self.trigger($.Event('embedplayer:statechange',{state:state}));
-				$self.trigger($.Event('embedplayer:'+type,properties));
+				if (state) $self.trigger($.Event('embedplayer:statechange', {state:state}));
+				$self.trigger($.Event('embedplayer:'+type, properties));
 			}
 		}
 	};
@@ -131,8 +131,8 @@
 		return module;
 	}
 
-	function init (self,options) {
-		var data = $.data(self,'embedplayer');
+	function init (self, options) {
+		var data = $.data(self, 'embedplayer');
 		if (!data) {
 			var module = null;
 
@@ -176,13 +176,13 @@
 				detail: {}
 			};
 
-			$.data(self,'embedplayer',data);
+			$.data(self, 'embedplayer', data);
 
 			var ok = false;
 			try {
-				module.init.call(self,data,function (player_id) {
+				module.init.call(self, data, function (player_id) {
 					data.player_id = player_id;
-					$.attr(self,'data-embedplayer-id',player_id === undefined ? '' : player_id);
+					$.attr(self, 'data-embedplayer-id', player_id === undefined ? '' : player_id);
 				});
 				ok = true;
 			}
@@ -190,7 +190,7 @@
 				if (!ok) {
 					// do it like that because catch and re-throw
 					// changes the stack trace in some browsers
-					$.removeData(self,'embedplayer');
+					$.removeData(self, 'embedplayer');
 				}
 			}
 		}
@@ -208,7 +208,7 @@
 
 		switch (command) {
 		case "init":
-			this.each(function () { init(this,options); });
+			this.each(function () { init(this, options); });
 			break;
 
 		case "play":
@@ -218,29 +218,29 @@
 		case "next":
 		case "prev":
 			this.each(function () {
-				var data = init(this,options);
-				data.module[command].call(this,data);
+				var data = init(this, options);
+				data.module[command].call(this, data);
 			});
 			break;
 
 		case "seek":
 			var position = Number(arguments[1]);
 			this.each(function () {
-				var data = init(this,options);
-				data.module.seek.call(this,data,position);
+				var data = init(this, options);
+				data.module.seek.call(this, data, position);
 			});
 			break;
 
 		case "listen":
 			var events = arguments.length > 1 ?
 				arguments[1] :
-				["ready","play","pause","finish","buffering","timeupdate","volumechange","durationchange","error"];
+				["ready", "play", "pause", "finish", "buffering", "timeupdate", "volumechange", "durationchange", "error"];
 			if (!$.isArray(events)) {
 				events = $.trim(events).split(/\s+/);
 			}
 			this.each(function () {
 				var data = init(this);
-				data.module.listen.call(this,data,events);
+				data.module.listen.call(this, data, events);
 				for (var i = 0; i < events.length; ++ i) {
 					data.listening[events[i]] = true;
 				}
@@ -252,7 +252,7 @@
 				var volume = Number(arguments[1]);
 				this.each(function () {
 					var data = init(this);
-					data.module.setVolume.call(this,data,volume);
+					data.module.setVolume.call(this, data, volume);
 				});
 			}
 			else if (this.length === 0) {
@@ -260,7 +260,7 @@
 			}
 			else {
 				var data = init(this[0]);
-				return data.module.volume.call(this[0],data,arguments[1]||$.noop);
+				return data.module.volume.call(this[0], data, arguments[1]||$.noop);
 			}
 			break;
 
@@ -271,7 +271,7 @@
 			}
 			else {
 				var data = init(this[0]);
-				return data.module[command].call(this[0],data,arguments[1]||$.noop);
+				return data.module[command].call(this[0], data, arguments[1]||$.noop);
 			}
 			break;
 			
@@ -281,9 +281,26 @@
 			}
 			else {
 				var data = init(this[0]);
-				return data.module.link.call(this[0],data);
+				return data.module.link.call(this[0], data);
 			}
 			break;
+
+		case "supported":
+			for (var i = 0; i < this.length; ++ i) {
+				var self = this[i];
+				var supported = false;
+				for (var j = 0; j < $.embedplayer.modules.length; ++ j) {
+					var candidate = $.embedplayer.modules[j];
+					if (candidate.matches.call(self)) {
+						supported = true;
+						break;
+					}
+				}
+				if (!supported) {
+					return false;
+				}
+			}
+			return this.length > 0;
 
 		default:
 			throw new TypeError("unknown command: "+command);
@@ -300,7 +317,7 @@
 			if (message) {
 				$('[data-embedplayer-id="'+message.player_id+'"]').each(function () {
 					var data = init(this);
-					data.module.processMessage.call(this,data,message,$.embedplayer.trigger.bind($.embedplayer,this,data));
+					data.module.processMessage.call(this, data, message, $.embedplayer.trigger.bind($.embedplayer, this, data));
 				});
 			}
 		}
