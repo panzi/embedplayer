@@ -12,8 +12,8 @@
 			var params = $.embedplayer.parseParams(match[2]);
 
 			callback(params.id);
-			data.detail.volume = NaN;
-			data.detail.currenttime = NaN;
+			data.detail.volume = 1;
+			data.detail.currenttime = 0;
 			data.detail.duration = NaN;
 			data.detail.commands = [];
 			data.detail.origin = $.embedplayer.origin(this.src);

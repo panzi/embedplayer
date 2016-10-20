@@ -15,12 +15,29 @@
 <script type="text/javascript" src="../src/vimeo.js"></script>
 <script type="text/javascript" src="../src/soundcloud.js"></script>
 <script type="text/javascript" src="../src/dailymotion.js"></script>
+<script type="text/javascript" src="../src/html5.js"></script>
 <script type="text/javascript">
 // <![CDATA[
 
-function init () {
+function loadVideo(tag, url) {
 	try {
-		$('#video').on('embedplayer:statechange', function (event) {
+		var attrs = {
+			id: 'video',
+			src: url
+		};
+		switch (tag) {
+		case 'iframe':
+			attrs.allowfullscreen = 'allowfullscreen';
+			attrs.frameborder = '0';
+		case 'video':
+			attrs.height = '360';
+		case 'audio':
+			attrs.width = '640';
+			attrs.controls = 'controls';
+			attrs.preload = 'auto';
+			break;
+		}
+		$('<'+tag+'>').attr(attrs).replaceAll('#video').on('embedplayer:statechange', function (event) {
 			$('#state').text(event.state);
 		}).on('embedplayer:error', function (event) {
 			var message = event.error||'';
@@ -28,58 +45,63 @@ function init () {
 			else if (event.message) { message += " "+event.message; }
 			$('#error').text(message);
 		}).on('embedplayer:durationchange', function (event) {
-			$('#duration').text(event.duration+'s');
+			$('#duration').text(event.duration.toFixed(2)+' seconds');
 		}).on('embedplayer:timeupdate', function (event) {
-			$('#currenttime').text(event.currentTime+'s');
+			$('#currenttime').text(event.currentTime.toFixed(2)+' seconds');
 		}).on('embedplayer:volumechange', function (event) {
-			$('#volume').text(event.volume);
-		}).embedplayer("listen");
+			$('#volume').text(event.volume.toFixed(2));
+		}).embedplayer("listen").embedplayer('volume', function (volume) {
+			$('#volume').text(volume.toFixed(2));
+		});
 	}
 	catch (e) {
 		$('#error').text(String(e));
 	}
 }
 
-function showPlayer (url) {
-	$('#video').clone(false).attr('src', url).replaceAll('#video');
+function updateVideo () {
+	var value = $('#embed').val().split('|');
 	$('#duration, #currenttime, #volume').text('?');
 	$('#state').text('loading...');
 	$('#error').text('');
-	init();
+	loadVideo(value[0], value[1]);
 }
 
-$(document).ready(init);
+$(document).ready(updateVideo);
 // ]]>
 </script>
 </head>
 <body>
 
 <p>
-<label>Embed: <select id="embed" onchange="showPlayer(this.value);">
+<label>Embed: <select id="embed" onchange="updateVideo();">
 <optgroup label="YouTube">
-	<option value="https://www.youtube.com/embed/eRsGyueVLvQ?enablejsapi=1" selected>Sintel</option>
-	<option value="https://www.youtube.com/embed/YE7VzlLtp-4?list=PL6B3937A5D230E335&amp;enablejsapi=1">Playlist</option>
+	<option value="iframe|https://www.youtube.com/embed/eRsGyueVLvQ?enablejsapi=1" selected>Sintel</option>
+	<option value="iframe|https://www.youtube.com/embed/YE7VzlLtp-4?list=PL6B3937A5D230E335&amp;enablejsapi=1">Playlist</option>
 </optgroup>
 <optgroup label="Vimeo">
-	<option value="https://player.vimeo.com/video/1084537?api=1&amp;player_id=vimeo_1">Big Buck Bunny</option>
+	<option value="iframe|https://player.vimeo.com/video/1084537?api=1&amp;player_id=vimeo_1">Big Buck Bunny</option>
 </optgroup>
 <optgroup label="SoundCloud">
-	<option value="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/113795767&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true">Theophany - Times End</option>
+	<option value="iframe|https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/113795767&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true">Theophany - Molgera (2013)</option>
 </optgroup>
 <optgroup label="Dailymotion">
-	<option value="https://www.dailymotion.com/embed/video/xyh8cw?api=postMessage&amp;id=dailymotion_1">EP Daily &amp; Dailymotion @ GDC 2013: Star Trek: The Video Game</option>
+	<option value="iframe|https://www.dailymotion.com/embed/video/xyh8cw?api=postMessage&amp;id=dailymotion_1">EP Daily &amp; Dailymotion @ GDC 2013: Star Trek: The Video Game</option>
+</optgroup>
+<optgroup label="HTML 5">
+	<option value="video|https://upload.wikimedia.org/wikipedia/commons/3/31/Physicsworks.ogg">Demonstration of conservation of potential energy in a small wrecking ball</option>
+	<option value="audio|https://people.xiph.org/~giles/2012/opus/ehren-paper_lights-96.opus">Paper Lights by Ehren Starks</option>
 </optgroup>
 <optgroup label="Errors">
-	<option value="https://www.youtube.com/embed/mqFNUMhmNCI?enablejsapi=1">YouTube: Private</option>
-	<option value="https://www.youtube.com/embed/00000000000?enablejsapi=1">YouTube: Not Found</option>
-	<option value="https://www.dailymotion.com/embed/video/000000?api=postMessage&amp;id=dailymotion_2">Dailymotion: Not Found</option>
-	<option value="http://example.com/">Unsupported</option>
+	<option value="iframe|https://www.youtube.com/embed/mqFNUMhmNCI?enablejsapi=1">YouTube: Private</option>
+	<option value="iframe|https://www.youtube.com/embed/00000000000?enablejsapi=1">YouTube: Not Found</option>
+	<option value="iframe|http://example.com/">Unsupported</option>
 </optgroup>
 </select>
 </p>
 
 <p>
-<iframe id="video" width="640" height="360" src="https://www.youtube.com/embed/eRsGyueVLvQ?enablejsapi=1" frameborder="0" allowfullscreen></iframe>
+<div id="video"></div>
 </p>
 
 <p>
@@ -96,9 +118,9 @@ $(document).ready(init);
 </p>
 
 </p>
-<span>duration: <span id="duration">?</span></span>
-<span>current time: <span id="currenttime">?</span></span>
-<span>volume: <span id="volume">?</span></span>
+<span>duration: <span id="duration">?</span></span>,
+<span>current time: <span id="currenttime">?</span></span>,
+<span>volume: <span id="volume">?</span></span>,
 <span id="state">loading...</span>
 <span id="error"></span>
 </p>

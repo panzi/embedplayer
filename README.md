@@ -8,6 +8,11 @@ their official JavaScript libraries. Currently supported players:
  * Vimeo
  * SoundCloud
  * Dailymotion
+ * HMTL 5 audio/video
+
+TODO:
+
+ * Twitch
 
 Why?
 ----
@@ -56,6 +61,7 @@ API Reference
  * [pause](#pause)
  * [stop](#stop)
  * [seek](#seektime)
+ * [supported](#supported)
  * [volume](#volumevalue)
 
 ### Properties

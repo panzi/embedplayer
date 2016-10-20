@@ -26,8 +26,8 @@
 			callback('youtube_'+data.detail.player_id);
 			data.detail.origin = /^https?:\/\/(www\.)?youtube-nocookie\.com\//i.test(this.src) ? 'https://www.youtube-nocookie.com' : 'https://www.youtube.com';
 			data.detail.duration = NaN;
-			data.detail.currenttime = NaN;
-			data.detail.volume = NaN;
+			data.detail.currenttime = 0;
+			data.detail.volume = 1;
 			data.detail.commands = [];
 			data.detail.video_id = /^https?:\/\/(?:www\.)?youtube(?:-nocookie)?\.com\/embed\/([-_a-z0-9]+)/i.exec(this.src)[1];
 			data.detail.timer = setInterval(function () {
