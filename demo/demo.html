@@ -19,24 +19,29 @@
 // <![CDATA[
 
 function init () {
-	$('#video').on('embedplayer:statechange', function (event) {
-		$('#state').text(event.state);
-	}).on('embedplayer:error', function (event) {
-		var message = event.error||'';
-		if (event.title)        { message += " "+event.title; }
-		else if (event.message) { message += " "+event.message; }
-		$('#error').text(message);
-	}).on('embedplayer:durationchange', function (event) {
-		$('#duration').text(event.duration+'s');
-	}).on('embedplayer:timeupdate', function (event) {
-		$('#currenttime').text(event.currentTime+'s');
-	}).on('embedplayer:volumechange', function (event) {
-		$('#volume').text(event.volume);
-	}).embedplayer("listen");
+	try {
+		$('#video').on('embedplayer:statechange', function (event) {
+			$('#state').text(event.state);
+		}).on('embedplayer:error', function (event) {
+			var message = event.error||'';
+			if (event.title)        { message += " "+event.title; }
+			else if (event.message) { message += " "+event.message; }
+			$('#error').text(message);
+		}).on('embedplayer:durationchange', function (event) {
+			$('#duration').text(event.duration+'s');
+		}).on('embedplayer:timeupdate', function (event) {
+			$('#currenttime').text(event.currentTime+'s');
+		}).on('embedplayer:volumechange', function (event) {
+			$('#volume').text(event.volume);
+		}).embedplayer("listen");
+	}
+	catch (e) {
+		$('#error').text(String(e));
+	}
 }
 
 function showPlayer (url) {
-	$('#video').clone(false).attr('src',url).replaceAll('#video');
+	$('#video').clone(false).attr('src', url).replaceAll('#video');
 	$('#duration, #currenttime, #volume').text('?');
 	$('#state').text('loading...');
 	$('#error').text('');
@@ -54,8 +59,6 @@ $(document).ready(init);
 <optgroup label="YouTube">
 	<option value="https://www.youtube.com/embed/eRsGyueVLvQ?enablejsapi=1" selected>Sintel</option>
 	<option value="https://www.youtube.com/embed/YE7VzlLtp-4?list=PL6B3937A5D230E335&amp;enablejsapi=1">Playlist</option>
-	<option value="https://www.youtube.com/embed/mqFNUMhmNCI?enablejsapi=1">Private</option>
-	<option value="https://www.youtube.com/embed/00000000000?enablejsapi=1">Not Found</option>
 </optgroup>
 <optgroup label="Vimeo">
 	<option value="https://player.vimeo.com/video/1084537?api=1&amp;player_id=vimeo_1">Big Buck Bunny</option>
@@ -65,7 +68,12 @@ $(document).ready(init);
 </optgroup>
 <optgroup label="Dailymotion">
 	<option value="https://www.dailymotion.com/embed/video/xyh8cw?api=postMessage&amp;id=dailymotion_1">EP Daily &amp; Dailymotion @ GDC 2013: Star Trek: The Video Game</option>
-	<option value="https://www.dailymotion.com/embed/video/000000?api=postMessage&amp;id=dailymotion_2">Not Found</option>
+</optgroup>
+<optgroup label="Errors">
+	<option value="https://www.youtube.com/embed/mqFNUMhmNCI?enablejsapi=1">YouTube: Private</option>
+	<option value="https://www.youtube.com/embed/00000000000?enablejsapi=1">YouTube: Not Found</option>
+	<option value="https://www.dailymotion.com/embed/video/000000?api=postMessage&amp;id=dailymotion_2">Dailymotion: Not Found</option>
+	<option value="http://example.com/">Unsupported</option>
 </optgroup>
 </select>
 </p>
