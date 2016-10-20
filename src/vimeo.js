@@ -9,8 +9,8 @@
 		buffering: null,
 		timeupdate: 'playProgress',
 		durationchange: 'loadProgress',
-		volumechange: null,
-		error: null
+		volumechange: 'volumechange',
+		error: 'error'
 	};
 
 	$.embedplayer.register({
@@ -23,13 +23,16 @@
 			var video_id = match[1];
 			var params = $.embedplayer.parseParams(match[2]);
 
-			callback(params.player_id);
 			data.detail.duration = NaN;
-			data.detail.currenttime = NaN;
+			data.detail.currenttime = 0;
 			data.detail.commands = [];
 			data.detail.origin = $.embedplayer.origin(this.src);
 			data.detail.video_id = video_id;
 			data.detail.callbacks = {};
+
+			send(this, data, "ping");
+
+			callback(params.player_id);
 		},
 		play: function (data) {
 			send(this, data, "play");
@@ -103,6 +106,13 @@
 					}
 				}
 			}
+			else if (message.data.event === "timeupdate") {
+				var currenttime = message.data.data.seconds;
+				if (currenttime !== data.detail.currenttime) {
+					data.detail.currenttime = currenttime;
+					trigger('timeupdate', {currentTime:currenttime});
+				}
+			}
 			else if (message.data.event === "loadProgress") {
 				if ('duration' in message.data.data) {
 					var duration = message.data.data.duration;
@@ -118,8 +128,14 @@
 			else if (message.data.event === "pause") {
 				trigger("pause");
 			}
-			else if (message.data.event === "finish") {
+			else if (message.data.event === "ended") {
 				trigger("finish");
+			}
+			else if (message.data.event === "volumechange") {
+				trigger("volumechange", {volume:message.data.data.volume});
+			}
+			else if (message.data.event === "error") {
+				trigger("error", {error: message.data.data.message||message.data.data.name});
 			}
 			else if (message.data.method) {
 				var callbacks = data.detail.callbacks[message.data.method];
