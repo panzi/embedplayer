@@ -1,0 +1,28 @@
+{
+	"name": "embedplayer",
+	"version": "1.0.0",
+	"description": "Generic jQuery API to control embedded videos",
+	"main": "embedplayer.jquery.js",
+	"scripts": {
+		"build": "uglifyjs src/embedplayer.js src/dailymotion.js src/soundcloud.js src/vimeo.js src/youtube.js -o dist/embedplayer.jquery.min.js --source-map dist/embedplayer.jquery.min.js.map --mangle",
+		"package": "npm install && npm run build"
+	},
+	"dependencies": {},
+	"devDependencies": {
+		"uglify-js": "~2.7.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:panzi/embedplayer.git"
+	},
+	"keywords": [
+		"jQuery",
+		"player"
+	],
+	"author": "Mathias Panzenböck <grosser.meister.morti@gmx.net>",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/panzi/embedplayer/issues"
+	},
+	"homepage": "https://github.com/panzi/embedplayer#readme"
+}
