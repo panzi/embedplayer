@@ -311,7 +311,6 @@
 
 	$(window).on("message", function (event) {
 		var raw = event.originalEvent;
-		console.log(raw.data);
 		var module = $.embedplayer.modules_by_origin[raw.origin];
 		if (module) {
 			var message = module.parseMessage(raw);
