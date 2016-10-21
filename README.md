@@ -27,17 +27,17 @@ Example
 
 ```javascript
 $('#embed').on('embedplayer:statechange', function (event) {
-	console.log('state:',event.state);
+	console.log('state:', event.state);
 }).on('embedplayer:error', function (event) {
-	console.error('error:',event.error);
+	console.error('error:', event.error);
 }).on('embedplayer:durationchange', function (event) {
-	console.log('duration:',event.duration);
+	console.log('duration:', event.duration);
 }).on('embedplayer:volumechange', function (event) {
-	console.log('volume:',event.volume);
+	console.log('volume:', event.volume);
 }).on('embedplayer:timeupdate', function (event) {
-	console.log('currentTime:',event.currentTime);
+	console.log('currentTime:', event.currentTime);
 }).on('embedplayer:ready', function (event) {
-	console.log('link:',$(this).embedplayer('link'));
+	console.log('link:', $(this).embedplayer('link'));
 }).embedplayer('listen'); // enable all events
 
 $('#embed').embedplayer('play');
