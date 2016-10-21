@@ -108,13 +108,13 @@ Enable certain events.
 Examples:
 
 ```javascript
-$('#embed').embedplayer('listen','timeupdate error');
+$('#embed').embedplayer('listen', 'timeupdate error');
 ```
 
 or:
 
 ```javascript
-$('#embed').embedplayer('listen',['timeupdate','error']);
+$('#embed').embedplayer('listen', ['timeupdate', 'error']);
 ```
 
 or to enable all events:
@@ -156,7 +156,7 @@ $('#embed').embedplayer('stop');
 Example:
 
 ```javascript
-$('#embed').embedplayer('seek',time);
+$('#embed').embedplayer('seek', time);
 ```
 
 ### supported()
@@ -176,7 +176,7 @@ if (!$('#embed').embedplayer('supported')) {
 Example:
 
 ```javascript
-$('#embed').embedplayer('volume',value);
+$('#embed').embedplayer('volume', value);
 ```
 
 Properties
@@ -184,38 +184,38 @@ Properties
 
 ### volume(callback)
 
-`callback` if a function that takes the volume value as paramert. The volume
+`callback` is a function that takes the volume value as paramert. The volume
 is in the range of 0 to 1. The value might be NaN if the player is not yet
 initialized or for some players if it hasn't started playing.
 
 Example:
 
 ```javascript
-$('#embed').embedplayer('volume',function (value) { console.log(value); });
+$('#embed').embedplayer('volume', function (value) { console.log(value); });
 ```
 
 ### currenttime(callback)
 
-`callback` if a function that takes the current time value as paramert. The
+`callback` is a function that takes the current time value as paramert. The
 time is given in seconds. The value might be NaN if the player is not yet
 initialized or for some players if it hasn't started playing.
 
 Example:
 
 ```javascript
-$('#embed').embedplayer('currenttime',function (value) { console.log(value); });
+$('#embed').embedplayer('currenttime', function (value) { console.log(value); });
 ```
 
 ### duration(callback)
 
-`callback` if a function that takes the duration value as paramert. The
+`callback` is a function that takes the duration value as paramert. The
 duration is given in seconds. The value might be NaN if the player is not yet
 initialized or for some players if it hasn't started playing.
 
 Example:
 
 ```javascript
-$('#embed').embedplayer('duration',function (value) { console.log(value); });
+$('#embed').embedplayer('duration', function (value) { console.log(value); });
 ```
 
 ### state
