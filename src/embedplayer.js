@@ -246,7 +246,7 @@
 				}
 			});
 			break;
-			
+
 		case "volume":
 			if (arguments.length > 1 && typeof(arguments[1]) !== "function") {
 				var volume = Number(arguments[1]);
@@ -274,7 +274,7 @@
 				return data.module[command].call(this[0], data, arguments[1]||$.noop);
 			}
 			break;
-			
+
 		case "link":
 			if (this.length === 0) {
 				return null;

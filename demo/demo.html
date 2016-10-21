@@ -13,6 +13,7 @@
 <script type="text/javascript" src="../src/embedplayer.js"></script>
 <script type="text/javascript" src="../src/youtube.js"></script>
 <script type="text/javascript" src="../src/vimeo.js"></script>
+<script type="text/javascript" src="../src/twitch.js"></script>
 <script type="text/javascript" src="../src/soundcloud.js"></script>
 <script type="text/javascript" src="../src/dailymotion.js"></script>
 <script type="text/javascript" src="../src/html5.js"></script>
@@ -29,10 +30,14 @@ function loadVideo(tag, url) {
 		case 'iframe':
 			attrs.allowfullscreen = 'allowfullscreen';
 			attrs.frameborder = '0';
+			attrs.width = '640';
+			attrs.height = '360';
+			break;
+
 		case 'video':
+			attrs.width = '640';
 			attrs.height = '360';
 		case 'audio':
-			attrs.width = '640';
 			attrs.controls = 'controls';
 			attrs.preload = 'auto';
 			break;
@@ -84,6 +89,10 @@ $(document).ready(updateVideo);
 </optgroup>
 <optgroup label="SoundCloud">
 	<option value="iframe|https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/113795767&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true">Theophany - Molgera (2013)</option>
+</optgroup>
+<optgroup label="Twitch">
+	<option value="iframe|https://player.twitch.tv/?channel=geekandsundry">Geek and Sundry</option>
+	<option value="iframe|https://player.twitch.tv/?video=v92780016">Felicia Day's Monologue Montage!!</option>
 </optgroup>
 <optgroup label="Dailymotion">
 	<option value="iframe|https://www.dailymotion.com/embed/video/xyh8cw?api=postMessage&amp;id=dailymotion_1">EP Daily &amp; Dailymotion @ GDC 2013: Star Trek: The Video Game</option>

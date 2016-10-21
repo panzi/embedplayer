@@ -6,13 +6,10 @@ their official JavaScript libraries. Currently supported players:
 
  * YouTube
  * Vimeo
+ * Twitch
  * SoundCloud
  * Dailymotion
  * HMTL 5 audio/video
-
-TODO:
-
- * Twitch
 
 Why?
 ----
@@ -269,7 +266,7 @@ Event object properties:
 
 Event object properties:
 
- * `currentTime` seconds
+ * `currentTime` in seconds
 
 ### embeplayer:volumechange
 
@@ -281,7 +278,7 @@ Event object properties:
 
 Event object properties:
 
- * `duration` seconds
+ * `duration` in seconds, for streams it might be `Infinity`
 
 ### embeplayer:error
 
@@ -303,3 +300,7 @@ Event object properties:
  * `message` (optional)
  * `title` (optional)
  * `statusCode` (optional) is a HTTP status code associated with the error
+
+**Note:** The Vimeo backend currently only supports `message` and `title` and
+just uses the error code `error` for all kinds of errors. I need to find a list
+of Vimeo error names to make an appropriate mapping.

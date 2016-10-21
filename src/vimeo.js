@@ -135,7 +135,11 @@
 				trigger("volumechange", {volume:message.data.data.volume});
 			}
 			else if (message.data.event === "error") {
-				trigger("error", {error: message.data.data.message||message.data.data.name});
+				trigger("error", {
+					error: 'error',
+					message: message.data.data.message,
+					title: message.data.data.name
+				});
 			}
 			else if (message.data.method) {
 				var callbacks = data.detail.callbacks[message.data.method];

@@ -23,7 +23,6 @@
 		init: function (data, callback) {
 			var self = this;
 			data.detail.player_id = next_id ++;
-			callback('youtube_'+data.detail.player_id);
 			data.detail.origin = /^https?:\/\/(www\.)?youtube-nocookie\.com\//i.test(this.src) ? 'https://www.youtube-nocookie.com' : 'https://www.youtube.com';
 			data.detail.duration = NaN;
 			data.detail.currenttime = 0;
@@ -40,6 +39,7 @@
 					self.contentWindow.postMessage(JSON.stringify({event:'listening', id:data.detail.player_id}), data.detail.origin);
 				}
 			}, 500);
+			callback('youtube_'+data.detail.player_id);
 		},
 		play: function (data) {
 			send(this, data, "playVideo");
@@ -153,7 +153,7 @@
 					if ('videoData' in info) {
 						data.detail.videoData = info.videoData;
 					}
-					
+
 					if ('availableQualityLevels' in info) {
 						data.detail.availableQualityLevels = info.availableQualityLevels;
 					}

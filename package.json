@@ -4,7 +4,7 @@
 	"description": "Generic jQuery API to control embedded videos",
 	"main": "embedplayer.jquery.js",
 	"scripts": {
-		"build": "uglifyjs src/embedplayer.js src/dailymotion.js src/soundcloud.js src/vimeo.js src/youtube.js src/html5.js -o dist/embedplayer.jquery.min.js --source-map dist/embedplayer.jquery.min.js.map --mangle",
+		"build": "uglifyjs src/embedplayer.js src/dailymotion.js src/soundcloud.js src/vimeo.js src/youtube.js src/twitch.js src/html5.js -o dist/embedplayer.jquery.min.js --source-map dist/embedplayer.jquery.min.js.map --mangle",
 		"package": "npm install && npm run build"
 	},
 	"dependencies": {},
