@@ -11,6 +11,8 @@ their official JavaScript libraries. Currently supported players:
  * Dailymotion
  * HMTL 5 audio/video
 
+Internet Explorer <=8 is not supported.
+
 Why?
 ----
 

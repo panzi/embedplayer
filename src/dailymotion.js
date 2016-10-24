@@ -21,13 +21,14 @@
 			data.detail.callbacks = {};
 		},
 		play: function (data) {
-			send(this, data, "play");
+			send(this, data, 'play');
 		},
 		pause: function (data) {
-			send(this, data, "pause");
+			send(this, data, 'pause');
 		},
 		stop: function (data) {
-			send(this, data, "pause");
+			send(this, data, 'seek', 0);
+			send(this, data, 'pause');
 		},
 		volume: function (data, callback) {
 			callback(data.detail.volume);
@@ -51,7 +52,9 @@
 			var message = {
 				data: $.embedplayer.parseParams(event.data.replace(/\+/g, ' '))
 			};
-			message.player_id = message.data.id;
+			if ('id' in message.data) {
+				message.player_id = message.data.id;
+			}
 			return message;
 		},
 		processMessage: function (data, message, trigger) {
@@ -97,11 +100,11 @@
 			case "pause":
 				trigger("pause");
 				break;
-				
+
 			case "ended":
 				trigger("finish");
 				break;
-				
+
 			case "error":
 				var statusCode = parseInt(message.data.statusCode, 10);
 				var error = "error";
@@ -138,7 +141,7 @@
 					if (statusCode === 500) {
 						error = "internal_server_error";
 					}
-					else if (statusCode === 500) {
+					else if (statusCode === 501) {
 						error = "not_implemented";
 					}
 					else {
@@ -147,10 +150,11 @@
 				}
 
 				trigger("error", {
-					error:error,
-					statusCode:message.data.statusCode,
-					title:message.data.title,
-					message:message.data.message});
+					error:      error,
+					statusCode: message.data.statusCode,
+					title:      message.data.title,
+					message:    message.data.message
+				});
 				break;
 
 			case "apiready":

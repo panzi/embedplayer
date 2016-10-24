@@ -1,4 +1,72 @@
 (function ($, undefined) {
+	function handlePlay(event) {
+		var data = $.data(this, 'embedplayer');
+		$.embedplayer.trigger(this, data, 'play');
+	}
+
+	function handlePause(event) {
+		var data = $.data(this, 'embedplayer');
+		$.embedplayer.trigger(this, data, 'pause');
+	}
+
+	function handleEnded(event) {
+		var data = $.data(this, 'embedplayer');
+		$.embedplayer.trigger(this, data, 'finish');
+	}
+
+	function handleWaiting(event) {
+		var data = $.data(this, 'embedplayer');
+		$.embedplayer.trigger(this, data, 'buffering');
+	}
+
+	function handleTimeupdate(event) {
+		var data = $.data(this, 'embedplayer');
+		$.embedplayer.trigger(this, data, 'timeupdate', {currentTime:this.currentTime});
+	}
+
+	function handleVolumechange(event) {
+		var data = $.data(this, 'embedplayer');
+		$.embedplayer.trigger(this, data, 'volumechange', {volume:this.volume});
+	}
+
+	function handleDurationchange(event) {
+		var data = $.data(this, 'embedplayer');
+		$.embedplayer.trigger(this, data, 'durationchange', {duration:this.duration});
+	}
+
+	function handleError(event) {
+		var data = $.data(this, 'embedplayer');
+		var error = 'error';
+		if (this.error) {
+			switch (this.error.code) {
+				case MediaError.MEDIA_ERR_ABORTED:
+					error = 'aborted';
+					break;
+
+				case MediaError.MEDIA_ERR_NETWORK:
+					error = 'network_error';
+					break;
+
+				case MediaError.MEDIA_ERR_DECODE:
+					error = 'decoding_error';
+					break;
+
+				case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
+					error = 'not_supported';
+					break;
+			}
+		}
+		$.embedplayer.trigger(this, data, 'error', {
+			error: error
+		});
+	}
+
+	function handleLoadedmetadata(event) {
+		var data = $.data(this, 'embedplayer');
+		this.removeEventListener('loadedmetadata', handleLoadedmetadata, false);
+		$.embedplayer.trigger(this, data, 'ready');
+	}
+
 	$.embedplayer.register({
 		matches: function () {
 			return $.nodeName(this, 'video') || $.nodeName(this, 'audio');
@@ -11,43 +79,25 @@
 				}, 0);
 			}
 			else {
-				this.addEventListener('loadedmetadata', function (event) {
-					$.embedplayer.trigger(this, data, 'ready');
-				}, false);
+				this.addEventListener('loadedmetadata', handleLoadedmetadata, false);
 			}
 
-			// initialize volume
+			// initialize volume and duration
 			$.embedplayer.trigger(this, data, 'volumechange', {volume:this.volume});
-
-			this.addEventListener('play', function (event) {
-				$.embedplayer.trigger(this, data, 'play');
-			}, false);
-
-			this.addEventListener('pause', function (event) {
-				$.embedplayer.trigger(this, data, 'pause');
-			}, false);
-
-			this.addEventListener('ended', function (event) {
-				$.embedplayer.trigger(this, data, 'finish');
-			}, false);
-
-			this.addEventListener('waiting', function (event) {
-				$.embedplayer.trigger(this, data, 'buffering');
-			}, false);
-
-			this.addEventListener('timeupdate', function (event) {
-				$.embedplayer.trigger(this, data, 'timeupdate', {currentTime:this.currentTime});
-			}, false);
-
-			this.addEventListener('volumechange', function (event) {
-				$.embedplayer.trigger(this, data, 'volumechange', {volume:this.volume});
-			}, false);
-
-			this.addEventListener('durationchange', function (event) {
+			if (!isNaN(this.duration)) {
 				$.embedplayer.trigger(this, data, 'durationchange', {duration:this.duration});
-			}, false);
+			}
 
 			callback();
+
+			this.addEventListener('play', handlePlay, false);
+			this.addEventListener('pause', handlePause, false);
+			this.addEventListener('ended', handleEnded, false);
+			this.addEventListener('waiting', handleWaiting, false);
+			this.addEventListener('timeupdate', handleTimeupdate, false);
+			this.addEventListener('volumechange', handleVolumechange, false);
+			this.addEventListener('durationchange', handleDurationchange, false);
+			this.addEventListener('error', handleError, false);
 		},
 		play: function (data) {
 			this.play();

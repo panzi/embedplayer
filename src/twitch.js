@@ -137,21 +137,7 @@
 				data.detail.channel ? 'https://www.twitch.tv/'+data.detail.channel : null;
 		},
 		parseMessage: function (event) {
-			var message = {
-				data: event.data
-			};
-			var $iframes = $('iframe');
-			for (var i = 0; i < $iframes.length; ++ i) {
-				var iframe = $iframes[i];
-				if (iframe.contentWindow === event.source) {
-					var data = $.data(iframe, 'embedplayer');
-					if (data) {
-						message.player_id = data.detail.player_id;
-						break;
-					}
-				}
-			}
-			return message;
+			return {data: event.data};
 		},
 		processMessage: function (data, message, trigger) {
 			if (message.data.namespace !== 'player.embed.client') {
@@ -193,6 +179,9 @@
 			}
 			else if (message.data.method === 'bridgestateupdate') {
 				var state = message.data.args[0];
+				data.detail.channel = state.channelName;
+				data.detail.video = state.videoID||null;
+
 				if ('volume' in state && state.volume !== data.detail.volume) {
 					data.detail.volume = state.volume;
 					trigger('volumechange', {volume: state.volume});

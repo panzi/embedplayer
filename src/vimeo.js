@@ -81,7 +81,9 @@
 			var message = {
 				data: JSON.parse(event.data)
 			};
-			message.player_id = message.data.player_id;
+			if ('player_id' in message.data) {
+				message.player_id = message.data.player_id;
+			}
 			return message;
 		},
 		processMessage: function (data, message, trigger) {

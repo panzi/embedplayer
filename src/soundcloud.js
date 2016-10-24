@@ -38,23 +38,22 @@
 			}
 
 			data.detail.duration = NaN;
-			data.detail.currenttime = NaN;
+			data.detail.currenttime = 0;
 			data.detail.commands = [];
 			data.detail.origin = $.embedplayer.origin(this.src);
 			data.detail.callbacks = {};
 
 			var self = this;
 
-			$(window).on('message', onmessage);
+			window.addEventListener('message', onmessage, false);
 			function onmessage (event) {
-				var raw = event.originalEvent;
-				if (self.contentWindow && raw.origin === data.detail.origin && self.contentWindow === raw.source) {
-					var message = data.module.parseMessage(raw);
+				if (self.contentWindow && event.origin === data.detail.origin && self.contentWindow === event.source) {
+					var message = data.module.parseMessage(event);
 					if (message.data.method === "ready") {
+						window.removeEventListener('message', onmessage, false);
 						data.detail.widget_id = message.data.widgetId;
-						callback(message.player_id);
+						callback("soundcloud_"+message.data.widgetId);
 						$.embedplayer.trigger(self, data, "ready");
-						$(window).off('message', onmessage);
 						// initialize some data
 						send(self, data, 'getDuration');
 						send(self, data, 'getVolume');
@@ -65,7 +64,7 @@
 					}
 				}
 				else if (!$.contains(self.ownerDocument.body, self)) {
-					$(window).off('message', onmessage);
+					window.removeEventListener('message', onmessage, false);
 				}
 			}
 		},

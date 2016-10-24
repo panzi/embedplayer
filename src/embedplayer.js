@@ -6,7 +6,7 @@
 		modules_by_origin: {},
 		defaults: {
 			matches: function () { return false; },
-			init: function (data, callback) { callback('id_'+(new Date().getTime())); },
+			init: function (data, callback) { callback(); },
 			play: function (data) {},
 			pause: function (data) {},
 			toggle: function (data) {
@@ -309,17 +309,23 @@
 		return this;
 	};
 
-	$(window).on("message", function (event) {
-		var raw = event.originalEvent;
-		var module = $.embedplayer.modules_by_origin[raw.origin];
+	window.addEventListener("message", function (event) {
+		var module = $.embedplayer.modules_by_origin[event.origin];
 		if (module) {
-			var message = module.parseMessage(raw);
+			var message = module.parseMessage(event);
 			if (message) {
-				$('[data-embedplayer-id="'+message.player_id+'"]').each(function () {
-					var data = init(this);
-					data.module.processMessage.call(this, data, message, $.embedplayer.trigger.bind($.embedplayer, this, data));
-				});
+				var iframes = 'player_id' in message ?
+					document.querySelectorAll('iframe[data-embedplayer-id="'+message.player_id+'"]') :
+					document.getElementsByTagName('iframe');
+				for (var i = 0; i < iframes.length; ++ i) {
+					var iframe = iframes[i];
+					if (iframe.contentWindow === event.source) {
+						var data = init(iframe);
+						data.module.processMessage.call(iframe, data, message, $.embedplayer.trigger.bind($.embedplayer, iframe, data));
+						break;
+					}
+				}
 			}
 		}
-	});
+	}, false);
 })(jQuery);
