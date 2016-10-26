@@ -80,8 +80,6 @@
 	//  }]
 	// }
 
-	var next_id = 1;
-
 	$.embedplayer.register({
 		origin: ['https://player.twitch.tv', 'http://player.twitch.tv'],
 		matches: function () {
@@ -91,7 +89,6 @@
 			var match = /^https?:\/\/player\.twitch\.tv\/\?([^#]*)/i.exec(this.src);
 			var params = $.embedplayer.parseParams(match[1]);
 
-			data.detail.player_id = 'twitch_'+(next_id ++);
 			data.detail.duration = NaN;
 			data.detail.currenttime = 0;
 			data.detail.volume = 1;
@@ -103,7 +100,7 @@
 
 			send(this, data, 'subscribe');
 
-			callback(data.detail.player_id);
+			callback();
 		},
 		play: function (data) {
 			send(this, data, 'play');
