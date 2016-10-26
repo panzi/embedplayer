@@ -23,8 +23,8 @@ Example
 -------
 
 ```html
-<iframe src="http://player.vimeo.com/video/1084537?api=1&amp;player_id=vimeo_1"
-	id="embed" width="640" height="360" frameborder="0" allowfullscreen></iframe>
+<iframe src="http://player.vimeo.com/video/1084537?api=1" id="embed"
+	width="640" height="360" frameborder="0" allowfullscreen></iframe>
 ```
 
 ```javascript
@@ -60,6 +60,8 @@ API Reference
  * [pause](#pause)
  * [stop](#stop)
  * [seek](#seektime)
+ * [next](#next)
+ * [prev](#prev)
  * [supported](#supported)
  * [volume](#volumevalue)
 
@@ -159,6 +161,26 @@ Example:
 
 ```javascript
 $('#embed').embedplayer('seek', time);
+```
+
+### next()
+
+Play the next video in playlist. Currently only supported for YouTube playlists.
+
+Example:
+
+```javascript
+$('#embed').embedplayer('next');
+```
+
+### prev()
+
+Play the previous video in playlist. Currently only supported for YouTube playlists.
+
+Example:
+
+```javascript
+$('#embed').embedplayer('prev');
 ```
 
 ### supported()
