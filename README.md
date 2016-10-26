@@ -23,7 +23,7 @@ Example
 -------
 
 ```html
-<iframe src="http://player.vimeo.com/video/1084537?api=1" id="embed"
+<iframe src="https://player.vimeo.com/video/1084537?api=1" id="embed"
 	width="640" height="360" frameborder="0" allowfullscreen></iframe>
 ```
 
@@ -48,6 +48,14 @@ $('#embed').embedplayer('volume',0.5);
 $('#embed').embedplayer('pause');
 $('#embed').embedplayer('stop');
 ```
+
+Bugs/TODO
+---------
+
+If the iframe is not loaded when the embed player is initialized any
+initialization message sent to the iframe will be lost. As I see it, it's not
+possible to determine if an iframe is already loaded cross browser (Firefox does
+not implement `iframe.readyState`).
 
 API Reference
 -------------
