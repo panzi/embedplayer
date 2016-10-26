@@ -165,7 +165,7 @@ $('#embed').embedplayer('seek', time);
 
 ### next()
 
-Play the next video in playlist. Currently only supported for YouTube playlists.
+Play the next video from the playlist. Currently only supported for YouTube playlists.
 
 Example:
 
@@ -175,7 +175,7 @@ $('#embed').embedplayer('next');
 
 ### prev()
 
-Play the previous video in playlist. Currently only supported for YouTube playlists.
+Play the previous video from the playlist. Currently only supported for YouTube playlists.
 
 Example:
 
@@ -321,6 +321,10 @@ Event object properties:
   * `client_error`
   * `internal_server_error`
   * `server_error`
+  * `aborted`
+  * `network_error`
+  * `decoding_error`
+  * `src_not_supported`
  * `message` (optional)
  * `title` (optional)
  * `statusCode` (optional) is a HTTP status code associated with the error

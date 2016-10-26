@@ -52,7 +52,7 @@
 					break;
 
 				case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
-					error = 'not_supported';
+					error = 'src_not_supported';
 					break;
 			}
 		}
