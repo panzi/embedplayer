@@ -105,6 +105,14 @@
 		pause: function (data) {
 			this.pause();
 		},
+		toggle: function (data) {
+			if (this.paused) {
+				this.play();
+			}
+			else {
+				this.pause();
+			}
+		},
 		stop: function (data) {
 			this.pause();
 			this.currentTime = 0;
