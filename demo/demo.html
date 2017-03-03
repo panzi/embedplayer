@@ -98,14 +98,7 @@ function loadVideo(tag, url) {
 			break;
 		}
 		$('#link-wrapper').hide();
-		var $embed = $('<'+tag+'>').attr(attrs).replaceAll('#video');
-
-		if (tag === 'iframe') {
-			$embed.load(initEmbed);
-		}
-		else {
-			initEmbed.call($embed[0]);
-		}
+		$('<'+tag+'>').attr(attrs).replaceAll('#video').each(initEmbed);
 	}
 	catch (e) {
 		$('#error').text(String(e));
@@ -146,7 +139,7 @@ $(document).ready(updateVideo);
 	<option value="iframe|https://www.dailymotion.com/embed/video/xyh8cw?api=postMessage">EP Daily &amp; Dailymotion @ GDC 2013: Star Trek: The Video Game</option>
 </optgroup>
 <optgroup label="HTML 5">
-	<option value="video|https://upload.wikimedia.org/wikipedia/commons/3/31/Physicsworks.ogg">Demonstration of conservation of potential energy in a small wrecking ball</option>
+	<option value="video|https://upload.wikimedia.org/wikipedia/commons/9/96/Curiosity%27s_Seven_Minutes_of_Terror.ogv">Curiosity's Seven Minutes of Terror</option>
 	<option value="audio|https://people.xiph.org/~giles/2012/opus/ehren-paper_lights-96.opus">Paper Lights by Ehren Starks</option>
 </optgroup>
 <optgroup label="Errors">
