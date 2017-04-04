@@ -130,7 +130,7 @@
 			else if (message.data.event === "pause") {
 				trigger("pause");
 			}
-			else if (message.data.event === "ended") {
+			else if (message.data.event === "finish") {
 				trigger("finish");
 			}
 			else if (message.data.event === "volumechange") {
