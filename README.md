@@ -317,22 +317,22 @@ Event object properties:
 Event object properties:
 
  * `error` possible values (might change, except for the first 4):
-  * `error`
-  * `not_found`
-  * `forbidden`
-  * `illegal_parameter`
-  * `informational`
-  * `success`
-  * `redirection`
-  * `found`
-  * `not_modified`
-  * `client_error`
-  * `internal_server_error`
-  * `server_error`
-  * `aborted`
-  * `network_error`
-  * `decoding_error`
-  * `src_not_supported`
+   * `error`
+   * `not_found`
+   * `forbidden`
+   * `illegal_parameter`
+   * `informational`
+   * `success`
+   * `redirection`
+   * `found`
+   * `not_modified`
+   * `client_error`
+   * `internal_server_error`
+   * `server_error`
+   * `aborted`
+   * `network_error`
+   * `decoding_error`
+   * `src_not_supported`
  * `message` (optional)
  * `title` (optional)
  * `statusCode` (optional) is a HTTP status code associated with the error
