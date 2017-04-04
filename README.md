@@ -16,7 +16,7 @@ Internet Explorer <=8 is not supported.
 Why?
 ----
 
-So you have a unified interface for all of these players and you don't need to
+So you have an unified interface for all of these players and you don't need to
 load the player APIs from the respective services (which is basically XSS).
 
 Example
