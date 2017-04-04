@@ -260,7 +260,7 @@
 			}
 			else {
 				var data = init(this[0]);
-				return data.module.volume.call(this[0], data, arguments[1]||$.noop);
+				data.module.volume.call(this[0], data, arguments[1]||$.noop);
 			}
 			break;
 
@@ -271,7 +271,7 @@
 			}
 			else {
 				var data = init(this[0]);
-				return data.module[command].call(this[0], data, arguments[1]||$.noop);
+				data.module[command].call(this[0], data, arguments[1]||$.noop);
 			}
 			break;
 
