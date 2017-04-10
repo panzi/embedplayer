@@ -83,7 +83,7 @@
 	$.embedplayer.register({
 		origin: ['https://player.twitch.tv', 'http://player.twitch.tv'],
 		matches: function () {
-			return $.nodeName(this, "iframe") && /^https?:\/\/player\.twitch\.tv\/\?(video|channel)/i.test(this.src);
+			return $.nodeName(this, "iframe") && /^https?:\/\/player\.twitch\.tv\/\?.*(video|channel)=/i.test(this.src);
 		},
 		init: function (data, callback) {
 			var match = /^https?:\/\/player\.twitch\.tv\/\?([^#]*)/i.exec(this.src);
