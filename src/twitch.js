@@ -10,7 +10,7 @@
 	// {method: "mute", namespace: "player.embed.host", args: [true or false]}
 	//
 	// received messages:
-	// {method: "bridgeplayerevent", namespace: "player.embed.client", args: ['progress']}
+	// {method: "bridgeplayerevent", namespace: "player.embed.client", args: [{event: 'progress'}]}
 	//  seen args: ready, init, volumechange, viewerschange, progress, segmentchange,
 	//             timeupdate, pause, stalled, waiting, loadedchannel, emptied,
 	//             play, abort, durationchange, manifestExtraInfo, qualitychange,
