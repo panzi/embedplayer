@@ -60,6 +60,10 @@ $('<iframe>').
   embedplayer('play');
 ```
 
+YouTube also has this
+[origin parameter](https://developers.google.com/youtube/player_parameters#origin),
+but it seems to be optional.
+
 Bugs/TODO
 ---------
 
