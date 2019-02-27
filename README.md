@@ -4,12 +4,12 @@ Embed Player
 Unified jQuery interface to various audio/video players without dependency on
 their official JavaScript libraries. Currently supported players:
 
- * YouTube
- * Vimeo
- * Twitch
- * SoundCloud
- * Dailymotion
- * HMTL 5 audio/video
+* YouTube
+* Vimeo
+* Twitch
+* SoundCloud
+* Dailymotion
+* HMTL 5 audio/video
 
 Internet Explorer <=8 is not supported.
 
@@ -49,6 +49,17 @@ $('#embed').embedplayer('pause');
 $('#embed').embedplayer('stop');
 ```
 
+**Note:** For Twitch players you need to pass the origin of the current host as an
+request parameter. E.g.:
+
+```javascript
+$('<iframe>').
+  attrs({src: 'https://player.twitch.tv/?allowfullscreen&video=v92780016&origin=' +
+    encodeURIComponent(location.origin)}).
+  appendTo(document.body).
+  embedplayer('play');
+```
+
 Bugs/TODO
 ---------
 
@@ -62,37 +73,37 @@ API Reference
 
 ### Functions
 
- * [init](#init)
- * [listen](#listenevents)
- * [play](#play)
- * [pause](#pause)
- * [stop](#stop)
- * [seek](#seektime)
- * [next](#next)
- * [prev](#prev)
- * [supported](#supported)
- * [volume](#volumevalue)
+* [init](#init)
+* [listen](#listenevents)
+* [play](#play)
+* [pause](#pause)
+* [stop](#stop)
+* [seek](#seektime)
+* [next](#next)
+* [prev](#prev)
+* [supported](#supported)
+* [volume](#volumevalue)
 
 ### Properties
 
- * [volume](#volumecallback)
- * [currenttime](#currenttimecallback)
- * [duration](#durationcallback)
- * [state](#state)
- * [link](#link)
+* [volume](#volumecallback)
+* [currenttime](#currenttimecallback)
+* [duration](#durationcallback)
+* [state](#state)
+* [link](#link)
 
 ### Events
 
- * [statechange](#embeplayerstatechange)
- * [ready](#embeplayerready)
- * [play](#embeplayerplay)
- * [pause](#embeplayerpause)
- * [finish](#embeplayerfinish)
- * [buffering](#embeplayerbuffering)
- * [timeupdate](#embeplayertimeupdate)
- * [volumechange](#embeplayervolumechange)
- * [durationchange](#embeplayerdurationchange)
- * [error](#embeplayererror)
+* [statechange](#embeplayerstatechange)
+* [ready](#embeplayerready)
+* [play](#embeplayerplay)
+* [pause](#embeplayerpause)
+* [finish](#embeplayerfinish)
+* [buffering](#embeplayerbuffering)
+* [timeupdate](#embeplayertimeupdate)
+* [volumechange](#embeplayervolumechange)
+* [durationchange](#embeplayerdurationchange)
+* [error](#embeplayererror)
 
 Functions
 ---------
@@ -254,11 +265,11 @@ $('#embed').embedplayer('duration', function (value) { console.log(value); });
 
 Possible states:
 
- * init
- * playing
- * paused
- * finished
- * buffering
+* init
+* playing
+* paused
+* finished
+* buffering
 
 Not all states are supported by all players.
 
@@ -287,7 +298,7 @@ TODO
 
 Event object properties:
 
- * `state` [see above](#state) for possible values
+* `state` [see above](#state) for possible values
 
 ### embeplayer:ready
 ### embeplayer:play
@@ -298,44 +309,44 @@ Event object properties:
 
 Event object properties:
 
- * `currentTime` in seconds
+* `currentTime` in seconds
 
 ### embeplayer:volumechange
 
 Event object properties:
 
- * `volume` between 0 and 1
+* `volume` between 0 and 1
 
 ### embeplayer:durationchange
 
 Event object properties:
 
- * `duration` in seconds, for streams it might be `Infinity`
+* `duration` in seconds, for streams it might be `Infinity`
 
 ### embeplayer:error
 
 Event object properties:
 
- * `error` possible values (might change, except for the first 4):
-   * `error`
-   * `not_found`
-   * `forbidden`
-   * `illegal_parameter`
-   * `informational`
-   * `success`
-   * `redirection`
-   * `found`
-   * `not_modified`
-   * `client_error`
-   * `internal_server_error`
-   * `server_error`
-   * `aborted`
-   * `network_error`
-   * `decoding_error`
-   * `src_not_supported`
- * `message` (optional)
- * `title` (optional)
- * `statusCode` (optional) is a HTTP status code associated with the error
+* `error` possible values (might change, except for the first 4):
+  * `error`
+  * `not_found`
+  * `forbidden`
+  * `illegal_parameter`
+  * `informational`
+  * `success`
+  * `redirection`
+  * `found`
+  * `not_modified`
+  * `client_error`
+  * `internal_server_error`
+  * `server_error`
+  * `aborted`
+  * `network_error`
+  * `decoding_error`
+  * `src_not_supported`
+* `message` (optional)
+* `title` (optional)
+* `statusCode` (optional) is a HTTP status code associated with the error
 
 **Note:** The Vimeo backend currently only supports `message` and `title` and
 just uses the error code `error` for all kinds of errors. I need to find a list

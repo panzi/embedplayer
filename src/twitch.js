@@ -155,7 +155,7 @@
 					}
 				}
 
-				switch (message.data.args[0]) {
+				switch (message.data.args[0].event) {
 					case 'play':
 						trigger('play');
 						break;
