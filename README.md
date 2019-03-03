@@ -64,6 +64,22 @@ YouTube also has this
 [origin parameter](https://developers.google.com/youtube/player_parameters#origin),
 but it seems to be optional.
 
+### Fullscreen Support
+
+Embed player doesn't provide an API for toggling a video to fullscreen because player
+APIs don't provide a method for that. You can use the HTML5 fullscreen API to implement
+this feature yourself, though:
+
+```HTML
+<button onclick="$('#embed')[0].requestFullscreen();">Fullscreen</button>
+```
+
+**NOTE:** The players *do* provide their own fullscreen buttons. Just adding your own
+will get you a situation where you can enter fullscreen twice and get situations that
+are very confusing to users. If you don't set the `allowfullscreen` attribute on the
+iframe some players will still render a grayed out non-functional fullscreen button,
+which is still confusing. So maybe just let this be handeled by the players.
+
 Bugs/TODO
 ---------
 
@@ -75,7 +91,7 @@ not implement `iframe.readyState`).
 API Reference
 -------------
 
-### Functions
+**Functions**
 
 * [init](#init)
 * [listen](#listenevents)
@@ -88,7 +104,7 @@ API Reference
 * [supported](#supported)
 * [volume](#volumevalue)
 
-### Properties
+**Properties**
 
 * [volume](#volumecallback)
 * [currenttime](#currenttimecallback)
@@ -96,7 +112,7 @@ API Reference
 * [state](#state)
 * [link](#link)
 
-### Events
+**Events**
 
 * [statechange](#embeplayerstatechange)
 * [ready](#embeplayerready)
@@ -269,11 +285,11 @@ $('#embed').embedplayer('duration', function (value) { console.log(value); });
 
 Possible states:
 
-* init
-* playing
-* paused
-* finished
-* buffering
+* `init`
+* `playing`
+* `paused`
+* `finished`
+* `buffering`
 
 Not all states are supported by all players.
 
@@ -296,8 +312,6 @@ console.log($('#embed').embedplayer('link'));
 Events
 ------
 
-TODO
-
 ### embeplayer:statechange
 
 Event object properties:
@@ -305,33 +319,55 @@ Event object properties:
 * `state` [see above](#state) for possible values
 
 ### embeplayer:ready
+
+Player is ready to receive commands.
+
 ### embeplayer:play
+
+Started playing a media.
+
 ### embeplayer:pause
+
+Paused playback.
+
 ### embeplayer:finish
+
+End of medium is reached and playback stopped.
+
 ### embeplayer:buffering
+
+Waiting for data to arrive. Not every backend supports this event.
+
 ### embeplayer:timeupdate
+
+Current time changed. This can be used to display playback progress.
 
 Event object properties:
 
-* `currentTime` in seconds
+* `currentTime` `Number` in seconds
 
 ### embeplayer:volumechange
 
+The playback volume changed. This can be used to implement a volume widget.
+
 Event object properties:
 
-* `volume` between 0 and 1
+* `volume` `Number` between 0 and 1
 
 ### embeplayer:durationchange
 
+This event is sent when the player loaded enough of the video to know it's
+duration.
+
 Event object properties:
 
-* `duration` in seconds, for streams it might be `Infinity`
+* `duration` `Number` in seconds, for streams it might be `Infinity`
 
 ### embeplayer:error
 
 Event object properties:
 
-* `error` possible values (might change, except for the first 4):
+* `error` `String` possible values (might change, except for the first 4):
   * `error`
   * `not_found`
   * `forbidden`
@@ -348,9 +384,9 @@ Event object properties:
   * `network_error`
   * `decoding_error`
   * `src_not_supported`
-* `message` (optional)
-* `title` (optional)
-* `statusCode` (optional) is a HTTP status code associated with the error
+* `message` `String` (optional)
+* `title` `String` (optional)
+* `statusCode` `String` (optional) is a HTTP status code associated with the error
 
 **Note:** The Vimeo backend currently only supports `message` and `title` and
 just uses the error code `error` for all kinds of errors. I need to find a list
