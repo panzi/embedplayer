@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8"/>
+	<title>jQuery Embed Player Demo</title>
+	<style type="text/css">
+	#error {
+		color: red;
+		font-weight: bold;
+	}
+	#volume-label {
+		width: 1em;
+		text-align: center;
+		display: inline-block;
+	}
+	#volume {
+		width: 12em;
+		vertical-align: middle;
+	}
+	#currenttime {
+		width: 640px;
+		margin: 0;
+		padding: 0;
+	}
+	</style>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<script type="text/javascript" src="embedplayer.js"></script>
+	<script type="text/javascript" src="youtube.js"></script>
+	<script type="text/javascript" src="vimeo.js"></script>
+	<script type="text/javascript" src="twitch.js"></script>
+	<script type="text/javascript" src="soundcloud.js"></script>
+	<script type="text/javascript" src="dailymotion.js"></script>
+	<script type="text/javascript" src="html5.js"></script>
+	<script type="text/javascript">
+// <![CDATA[
+function initEmbed() {
+	$(this).on('embedplayer:statechange', function (event) {
+		$('#state').text(event.state);
+	}).on('embedplayer:error', function (event) {
+		var message = event.error||'';
+		if (event.title)        { message += " "+event.title; }
+		else if (event.message) { message += " "+event.message; }
+		$('#error').text(message);
+	}).on('embedplayer:durationchange', function (event) {
+		if (isFinite(event.duration)) {
+			$('#currenttime').show().prop('max', event.duration);
+		}
+		else {
+			$('#currenttime').hide();
+		}
+		$('#duration').text(event.duration.toFixed(2)+' seconds');
+	}).on('embedplayer:timeupdate', function (event) {
+		$('#currenttime').val(event.currentTime);
+		$('#currenttime-txt').text(event.currentTime.toFixed(2)+' seconds');
+	}).on('embedplayer:volumechange', function (event) {
+		$('#volume').val(event.volume);
+		$('#volume-label').text(
+			event.volume <=   0 ? '🔇' :
+			event.volume <= 1/3 ? '🔈' :
+			event.volume <= 2/3 ? '🔉' :
+								  '🔊'
+		);
+		$('#volume-txt').text(event.volume.toFixed(2));
+	}).on('embedplayer:ready', function (event) {
+		var link = $(this).embedplayer('link');
+		if (link) {
+			$('#link').attr('href', link);
+			$('#link-wrapper').show();
+		}
+		var volume = +$('#volume').val();
+		$(this).embedplayer('volume', volume);
+		$('#volume-txt').text(volume.toFixed(2));
+	}).
+	embedplayer("listen");
+}
+
+function loadVideo(tag, url) {
+	try {
+		var attrs = {
+			id: 'video',
+			src: url
+		};
+		switch (tag) {
+		case 'iframe':
+			attrs.allowfullscreen = 'allowfullscreen';
+			attrs.frameborder = '0';
+			attrs.width = '640';
+			attrs.height = '360';
+
+			// Twitch now needs the embedding site's origin passed as an parameter
+			if (/^https?:\/\/player\.twitch\.tv/.test(attrs.src)) {
+				attrs.src += '&origin=' + encodeURIComponent(location.origin || location.protocol + '//' + location.host);
+			}
+			break;
+
+		case 'video':
+			attrs.width = '640';
+			attrs.height = '360';
+		case 'audio':
+			attrs.controls = 'controls';
+			attrs.preload = 'auto';
+			break;
+		}
+		$('#link-wrapper').hide();
+		$('<'+tag+'>').attr(attrs).replaceAll('#video').each(initEmbed);
+	}
+	catch (e) {
+		$('#error').text(String(e));
+	}
+}
+
+function updateVideo () {
+	var value = $('#embed').val().split('|');
+	$('#duration, #currenttime, #volume').text('?');
+	$('#state').text('loading...');
+	$('#error').text('');
+	loadVideo(value[0], value[1]);
+}
+
+$(document).ready(updateVideo);
+// ]]>
+	</script>
+</head>
+<body>
+
+<p>
+<label>Embed: <select id="embed" onchange="updateVideo();">
+<optgroup label="YouTube">
+	<option value="iframe|https://www.youtube.com/embed/eRsGyueVLvQ?enablejsapi=1" selected>Sintel</option>
+	<option value="iframe|https://www.youtube.com/embed/YE7VzlLtp-4?list=PL6B3937A5D230E335&amp;enablejsapi=1">Playlist</option>
+</optgroup>
+<optgroup label="Vimeo">
+	<option value="iframe|https://player.vimeo.com/video/1084537?api=1">Big Buck Bunny</option>
+</optgroup>
+<optgroup label="SoundCloud">
+	<option value="iframe|https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/113795767&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true">Theophany - Molgera (2013)</option>
+</optgroup>
+<optgroup label="Twitch">
+	<option value="iframe|https://player.twitch.tv/?allowfullscreen&channel=geekandsundry">Geek and Sundry</option>
+	<option value="iframe|https://player.twitch.tv/?allowfullscreen&video=v92780016">Felicia Day's Monologue Montage!!</option>
+</optgroup>
+<optgroup label="Dailymotion">
+	<option value="iframe|https://www.dailymotion.com/embed/video/xyh8cw?api=postMessage">EP Daily &amp; Dailymotion @ GDC 2013: Star Trek: The Video Game</option>
+</optgroup>
+<optgroup label="HTML 5">
+	<option value="video|https://upload.wikimedia.org/wikipedia/commons/9/96/Curiosity%27s_Seven_Minutes_of_Terror.ogv">Curiosity's Seven Minutes of Terror</option>
+	<option value="audio|https://people.xiph.org/~giles/2012/opus/ehren-paper_lights-96.opus">Paper Lights by Ehren Starks</option>
+</optgroup>
+<optgroup label="Errors">
+	<option value="iframe|https://www.youtube.com/embed/mqFNUMhmNCI?enablejsapi=1">YouTube: Private</option>
+	<option value="iframe|https://www.youtube.com/embed/00000000000?enablejsapi=1">YouTube: Not Found</option>
+	<option value="video|https://example.com/">HTML5: Unsupported</option>
+	<option value="iframe|http://example.com/">IFRAME: Unsupported</option>
+</optgroup>
+</select>
+</p>
+
+<p>
+<div id="video"></div>
+</p>
+
+<p>
+<button onclick="$('#video').embedplayer('play');" title="Play">▶</button>
+<button onclick="$('#video').embedplayer('pause');" title="Pause">⏸</button>
+<button onclick="$('#video').embedplayer('toggle');" title="Play/Pause">⏯</button>
+<button onclick="$('#video').embedplayer('stop');" title="Stop">◼</button>
+<button onclick="$('#video').embedplayer('prev');" title="Previous">⏮</button>
+<button onclick="$('#video').embedplayer('next');" title="Next">⏭</button>
+
+<label for="volume" id="volume-label">🔊</label>
+<input id="volume" type="range" min="0" max="1" value="1" step="0.01" oninput="$('#video').embedplayer('volume', +this.value);" />
+</p>
+
+<input id="currenttime" type="range" min="0" max="0" value="0" step="0.1" oninput="$('#video').embedplayer('seek', +this.value);" />
+
+<p>
+<span>duration: <span id="duration">?</span></span>,
+<span>current time: <span id="currenttime-txt">?</span></span>,
+<span>volume: <span id="volume-txt">?</span></span>,
+<span id="link-wrapper"><a id="link" href="javascript:;">link</a>, </span>
+<span id="state">loading...</span>
+<span id="error"></span>
+</p>
+
+</body>
+</html>
