@@ -13,6 +13,8 @@ their official JavaScript libraries. Currently supported players:
 
 Internet Explorer <=8 is not supported.
 
+[Online Demo](http://panzi.github.io/embedplayer/)
+
 Why?
 ----
 
