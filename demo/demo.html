@@ -67,7 +67,9 @@ function initEmbed() {
 			$('#link').attr('href', link);
 			$('#link-wrapper').show();
 		}
-		$(this).embedplayer('volume', +$('#volume').val());
+		var volume = +$('#volume').val();
+		$(this).embedplayer('volume', volume);
+		$('#volume-txt').text(volume.toFixed(2));
 	}).
 	embedplayer("listen");
 }
